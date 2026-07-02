@@ -1,0 +1,1818 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>信元 CreditLens · 发债主体基本面异动洞察 Agent</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root { --brand:#0F6E56; --brand-2:#185FA5; --danger:#A32D2D; --warn:#BA7517; --ink:#2C2C2A; --muted:#5F5E5A; --line:#E5E3DA; --bg:#FAF8F2; }
+  html,body { background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; }
+  .chip { display:inline-flex; align-items:center; padding:2px 8px; border-radius:6px; font-size:11px; line-height:18px; border:1px solid var(--line); background:#F5F3EA; color:#5F5E5A; }
+  .chip-red { background:#FCEBEB; color:#A32D2D; border-color:#F7C1C1; }
+  .chip-amber { background:#FAEEDA; color:#854F0B; border-color:#FAC775; }
+  .chip-blue { background:#E6F1FB; color:#0C447C; border-color:#B5D4F4; }
+  .chip-green { background:#E1F5EE; color:#085041; border-color:#9FE1CB; }
+  .chip-gray { background:#F1EFE8; color:#444441; }
+  .prio-high { background:#FCEBEB; color:#791F1F; }
+  .prio-mid  { background:#FAEEDA; color:#854F0B; }
+  .prio-low  { background:#E1F5EE; color:#0F6E56; }
+  .btn { padding:6px 12px; border:1px solid var(--line); border-radius:8px; background:#fff; font-size:12px; color:#444441; cursor:pointer; transition:all .15s; }
+  .btn:hover { border-color:#B4B2A9; background:#F5F3EA; }
+  .btn-active { background:#0F6E56; color:#fff; border-color:#0F6E56; }
+  .btn-active:hover { background:#0F6E56; color:#fff; }
+  .btn-primary { background:#0F6E56; color:#fff; border-color:#0F6E56; }
+  .btn-primary:hover { background:#0d5f4a; border-color:#0d5f4a; color:#fff;}
+  .issuer-row { cursor:pointer; transition:background .12s; }
+  .issuer-row:hover { background:#F5F3EA; }
+  .issuer-row.on { background:#E6F1FB; border-left:3px solid #185FA5; }
+  .step-dot { width:8px; height:8px; border-radius:50%; background:#0F6E56; margin-top:6px;}
+  .step-line { width:1px; background:#D3D1C7; }
+  .evi-badge { display:inline-flex; align-items:center; font-size:11px; padding:2px 6px; border-radius:4px; background:#F1EFE8; color:#5F5E5A; margin-right:6px; margin-bottom:4px; cursor:pointer; }
+  .evi-badge:hover { background:#E5E3DA; color:#2C2C2A;}
+  .kbd { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; padding:1px 5px; border:1px solid var(--line); border-radius:4px; color:#5F5E5A; background:#FAF8F2; }
+  .fade-in { animation: fade .35s ease both; }
+  @keyframes fade { from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+  .slide-in { animation: slideIn .3s ease both; }
+  @keyframes slideIn { from{opacity:0; transform:translateX(20px);} to{opacity:1; transform:none;} }
+  .pulse { animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.5;} }
+  .scroll-thin::-webkit-scrollbar { width:6px; height:6px;}
+  .scroll-thin::-webkit-scrollbar-thumb { background:#D3D1C7; border-radius:3px; }
+  .tab-item { padding:10px 0; cursor:pointer; color:#5F5E5A; border-bottom:2px solid transparent; transition:all .15s; }
+  .tab-item:hover { color:#2C2C2A; }
+  .tab-active { color:#0F6E56 !important; border-bottom:2px solid #0F6E56 !important; }
+  .action-danger { background:#FCEBEB; color:#791F1F; border:1px solid #F7C1C1; }
+  .action-warn { background:#FAEEDA; color:#854F0B; border:1px solid #FAC775; }
+  .action-info { background:#E6F1FB; color:#0C447C; border:1px solid #B5D4F4; }
+  .modal-mask { position:fixed; inset:0; background:rgba(28,28,26,.45); z-index:50; display:none; align-items:center; justify-content:center; padding:24px;}
+  .modal-mask.on { display:flex; }
+  .modal-box { background:#fff; border-radius:14px; max-width:720px; width:100%; max-height:85vh; overflow:auto; box-shadow:0 20px 60px rgba(0,0,0,.18);}
+  .toast { position:fixed; top:16px; right:16px; background:#0F6E56; color:#fff; padding:10px 16px; border-radius:8px; font-size:13px; z-index:60; box-shadow:0 8px 24px rgba(0,0,0,.15); animation: slideIn .3s ease;}
+  .toast.err { background:#A32D2D; }
+  .toast.warn { background:#BA7517; }
+  .chat-user { background:#E6F1FB; color:#0C447C; }
+  .chat-ai { background:#F5F3EA; color:#2C2C2A; }
+  .typing::after { content:'▍'; animation:blink 1s step-end infinite; margin-left:2px;}
+  @keyframes blink { 50%{opacity:0;} }
+  .page { display:none !important; }
+  .page.on { display:block !important; }
+  #page-dashboard.on { display:grid !important; }
+  .live-dot { width:8px; height:8px; border-radius:50%; background:#0F6E56; box-shadow:0 0 0 0 rgba(15,110,86,.4); animation: live 1.5s infinite;}
+  @keyframes live { 0%{box-shadow:0 0 0 0 rgba(15,110,86,.4);} 70%{box-shadow:0 0 0 8px rgba(15,110,86,0);} 100%{box-shadow:0 0 0 0 rgba(15,110,86,0);}}
+  input:focus, textarea:focus { outline:none; border-color:#0F6E56; box-shadow:0 0 0 3px rgba(15,110,86,.1);}
+  .checkbox { width:14px; height:14px; border:1.5px solid #B4B2A9; border-radius:3px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; background:#fff; flex-shrink:0;}
+  .checkbox.on { background:#0F6E56; border-color:#0F6E56; color:#fff;}
+  .checkbox.on::after { content:'✓'; font-size:11px; line-height:1;}
+  .drawer { position:fixed; top:0; right:0; bottom:0; width:400px; background:#fff; box-shadow:-8px 0 24px rgba(0,0,0,.1); z-index:40; transform:translateX(100%); transition:transform .3s;}
+  .drawer.on { transform:translateX(0); }
+  details > summary { cursor:pointer; list-style:none; }
+  details > summary::-webkit-details-marker { display:none; }
+  .quality-item { padding:10px 12px; border:1px solid var(--line); border-radius:8px; margin-bottom:8px; background:#fff;}
+  .quality-item.pass { border-left:3px solid #0F6E56;}
+  .quality-item.warn { border-left:3px solid #BA7517;}
+  .quality-item.fail { border-left:3px solid #A32D2D;}
+</style>
+</head>
+<body>
+<div class="min-h-screen">
+  <!-- Top bar -->
+  <header class="border-b border-[color:var(--line)] bg-white sticky top-0 z-30">
+    <div class="max-w-[1440px] mx-auto px-6 py-3 flex items-center gap-4">
+      <div class="flex items-center gap-2 cursor-pointer" onclick="switchPage('dashboard')">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:#0F6E56;color:#fff;font-weight:500">信</div>
+        <div>
+          <div class="text-[15px] font-medium leading-none">信元 CreditLens</div>
+          <div class="text-[11px] text-[color:var(--muted)] mt-1">发债主体基本面异动洞察 Agent</div>
+        </div>
+      </div>
+      <div class="ml-6 hidden md:flex items-center gap-4 text-[12px] text-[color:var(--muted)]">
+        <span class="chip chip-green flex items-center gap-1"><span class="live-dot"></span>实时监测中</span>
+        <span>数据更新：<span id="updated">2026-07-01 15:00</span></span>
+        <span>主体池：<span id="tot">10</span> 家 · 今日异动 <span id="et">24</span> 条</span>
+      </div>
+      <div class="ml-auto flex items-center gap-2">
+        <div class="relative">
+          <input id="searchInput" class="pl-8 pr-3 py-1.5 text-[12px] rounded-lg border border-[color:var(--line)] w-[240px]" placeholder="搜索主体 / 事件 / 标签…" />
+          <svg class="w-4 h-4 absolute left-2.5 top-2 text-[color:var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <div id="searchDropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[color:var(--line)] rounded-lg shadow-lg z-40 max-h-[280px] overflow-auto"></div>
+        </div>
+        <button class="btn" onclick="simulatePush()" title="模拟新风险事件推送">📡 模拟推送</button>
+        <button class="btn" onclick="openDrawer()">🔔 <span id="notifCount">3</span></button>
+        <button class="btn btn-primary" onclick="exportBrief()">导出研究简报</button>
+      </div>
+    </div>
+    <nav class="max-w-[1440px] mx-auto px-6 flex gap-6 text-[13px]">
+      <a class="tab-item tab-active" data-page="dashboard" onclick="switchPage('dashboard')">主体池看板</a>
+      <a class="tab-item" data-page="reasoning" onclick="switchPage('reasoning')">证据链推理</a>
+      <a class="tab-item" data-page="assistant" onclick="switchPage('assistant')">AI 研究助手</a>
+      <a class="tab-item" data-page="quality" onclick="switchPage('quality')">质检 / 复核</a>
+      <a class="tab-item" data-page="watchlist" onclick="switchPage('watchlist')">跟踪清单 <span id="wlBadge" class="chip chip-red ml-1">0</span></a>
+    </nav>
+  </header>
+
+  <!-- ============ 页面1：主体池看板（默认） ============ -->
+  <main id="page-dashboard" class="page on max-w-[1440px] mx-auto px-6 py-5 grid grid-cols-12 gap-5">
+    <!-- Left -->
+    <section class="col-span-4 space-y-3">
+      <div class="card p-4">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-[14px] font-medium">主体池筛查</div>
+          <div class="text-[11px] text-[color:var(--muted)]">按 AI 综合优先级排序</div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 mb-3">
+          <div class="rounded-lg p-2 text-center cursor-pointer hover:opacity-80" style="background:#FCEBEB" onclick="applyFilter('high')">
+            <div class="text-[11px] text-[color:var(--muted)]">高优先级</div>
+            <div class="text-[18px] font-medium" style="color:#791F1F" id="c-high">3</div>
+          </div>
+          <div class="rounded-lg p-2 text-center cursor-pointer hover:opacity-80" style="background:#FAEEDA" onclick="applyFilter('mid')">
+            <div class="text-[11px] text-[color:var(--muted)]">中优先级</div>
+            <div class="text-[18px] font-medium" style="color:#854F0B" id="c-mid">4</div>
+          </div>
+          <div class="rounded-lg p-2 text-center cursor-pointer hover:opacity-80" style="background:#E1F5EE" onclick="applyFilter('low')">
+            <div class="text-[11px] text-[color:var(--muted)]">低优先级</div>
+            <div class="text-[18px] font-medium" style="color:#0F6E56" id="c-low">3</div>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-1 mb-2" id="filters">
+          <button class="btn btn-active" data-f="all">全部</button>
+          <button class="btn" data-f="high">高优先级</button>
+          <button class="btn" data-f="mid">中优先级</button>
+          <button class="btn" data-f="low">低优先级</button>
+        </div>
+        <div class="flex flex-wrap gap-1 mb-2" id="indFilters"></div>
+        <div class="max-h-[520px] overflow-auto scroll-thin -mx-2" id="issuerList"></div>
+      </div>
+
+      <div class="card p-4">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-[13px] font-medium">今日 AI 推荐关注</div>
+          <span class="chip chip-blue">Agent 自动生成</span>
+        </div>
+        <ul class="text-[12px] text-[color:var(--muted)] space-y-1.5 leading-snug">
+          <li>· A集团、H钢铁 触发多因子共振，建议 <span class="chip chip-red">重点观察</span></li>
+          <li>· B城投 短债占比升至 48%，建议跟踪政府端支持</li>
+          <li>· F汽车零部件 客户集中度上升，建议下沉至大客户信用</li>
+          <li>· E消费、I基建 保持稳定，可作为组合底仓</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Middle -->
+    <section class="col-span-5 space-y-3">
+      <div class="card p-5" id="issuerHeader"></div>
+
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-[14px] font-medium">证据链推理 <span class="text-[11px] text-[color:var(--muted)] ml-2">Evidence → Meaning → Path → Judgement → Follow-up</span></div>
+          <div class="flex items-center gap-2">
+            <button class="btn" onclick="rerunReasoning()">🔄 重新推理</button>
+            <span class="chip chip-blue">五步推理</span>
+          </div>
+        </div>
+        <div id="reasoning" class="space-y-4"></div>
+      </div>
+
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-[14px] font-medium">近期异动事件</div>
+          <div class="text-[11px] text-[color:var(--muted)]">来源覆盖 公告 · 评级 · 财报 · 舆情 · 行业 · 交易所</div>
+        </div>
+        <div id="events" class="space-y-2 max-h-[340px] overflow-auto scroll-thin"></div>
+      </div>
+    </section>
+
+    <!-- Right -->
+    <section class="col-span-3 space-y-3">
+      <div class="card p-5" id="conclusion"></div>
+
+      <div class="card p-4">
+        <div class="text-[13px] font-medium mb-2">财务趋势</div>
+        <div style="position:relative;width:100%;height:170px;">
+          <canvas id="finChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card p-4">
+        <div class="text-[13px] font-medium mb-2">信用利差走势 (bp)</div>
+        <div style="position:relative;width:100%;height:150px;">
+          <canvas id="spdChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card p-4">
+        <div class="text-[13px] font-medium mb-2">六维风险画像</div>
+        <div style="position:relative;width:100%;height:220px;">
+          <canvas id="radarChart"></canvas>
+        </div>
+        <div class="text-[11px] text-[color:var(--muted)] mt-1 leading-snug">数值越大代表该维度越稳健。</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ 页面2：证据链推理（大屏） ============ -->
+  <main id="page-reasoning" class="page max-w-[1440px] mx-auto px-6 py-5">
+    <div class="grid grid-cols-12 gap-5">
+      <section class="col-span-3 space-y-3">
+        <div class="card p-4">
+          <div class="text-[13px] font-medium mb-2">选择主体</div>
+          <div id="reasoningIssuerList" class="max-h-[70vh] overflow-auto scroll-thin -mx-2"></div>
+        </div>
+      </section>
+      <section class="col-span-9 space-y-3">
+        <div class="card p-5" id="reasoningHeader"></div>
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-[15px] font-medium">证据链五步推理（详细版）</div>
+            <div class="flex gap-2">
+              <button class="btn" onclick="rerunReasoningFull()">🔄 重新推理</button>
+              <button class="btn" onclick="downloadReasoning()">📥 导出推理链</button>
+            </div>
+          </div>
+          <div id="reasoningFull" class="space-y-5"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ 页面3：AI 研究助手 ============ -->
+  <main id="page-assistant" class="page max-w-[1440px] mx-auto px-6 py-5">
+    <div class="grid grid-cols-12 gap-5">
+      <section class="col-span-3 space-y-3">
+        <div class="card p-4">
+          <div class="text-[13px] font-medium mb-2">当前研究主体</div>
+          <div id="assistantSubject"></div>
+        </div>
+        <div class="card p-4">
+          <div class="text-[13px] font-medium mb-3">推荐提问</div>
+          <div class="space-y-1.5" id="quickAsks">
+            <button class="btn w-full text-left" onclick="ask('帮我总结这家主体的核心信用风险')">帮我总结核心信用风险</button>
+            <button class="btn w-full text-left" onclick="ask('这些异动事件是否构成信用资质实质恶化？')">异动是否构成实质恶化？</button>
+            <button class="btn w-full text-left" onclick="ask('如果我持有该主体债券，建议动作是什么？')">持仓建议动作是什么？</button>
+            <button class="btn w-full text-left" onclick="ask('同行业还有哪些相似主体值得关注？')">同行业相似主体？</button>
+            <button class="btn w-full text-left" onclick="ask('生成一段80字信用简评供组合会议使用')">生成80字信用简评</button>
+          </div>
+        </div>
+        <div class="card p-4">
+          <div class="text-[13px] font-medium mb-2">上下文约束</div>
+          <ul class="text-[11px] text-[color:var(--muted)] space-y-1.5 leading-snug">
+            <li>✓ 信用研究框架约束</li>
+            <li>✓ 证据链引用强制</li>
+            <li>✓ 主体池上下文</li>
+            <li>✓ 任务流约束（研究员动作）</li>
+          </ul>
+        </div>
+      </section>
+      <section class="col-span-9">
+        <div class="card p-5 flex flex-col" style="height:calc(100vh - 180px);">
+          <div class="flex items-center justify-between pb-3 border-b border-[color:var(--line)]">
+            <div class="flex items-center gap-2">
+              <span class="chip chip-green flex items-center gap-1"><span class="live-dot"></span>Agent 在线</span>
+              <span class="text-[12px] text-[color:var(--muted)]">证据链模式 · 引用主体池全部信息</span>
+            </div>
+            <button class="btn" onclick="clearChat()">清空对话</button>
+          </div>
+          <div id="chatWindow" class="flex-1 overflow-auto scroll-thin py-4 space-y-3"></div>
+          <div class="pt-3 border-t border-[color:var(--line)] flex gap-2">
+            <input id="chatInput" class="flex-1 px-4 py-2.5 text-[13px] rounded-lg border border-[color:var(--line)]" placeholder="向 CreditLens Agent 提问…（Enter 发送）" onkeydown="if(event.key==='Enter')sendChat()"/>
+            <button class="btn btn-primary" onclick="sendChat()">发送</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ 页面4：质检 / 复核 ============ -->
+  <main id="page-quality" class="page max-w-[1440px] mx-auto px-6 py-5">
+    <div class="grid grid-cols-12 gap-5">
+      <section class="col-span-4 space-y-3">
+        <div class="card p-4">
+          <div class="text-[13px] font-medium mb-2">上传/粘贴 AI 生成的信评报告</div>
+          <textarea id="qaInput" rows="14" class="w-full text-[12px] p-3 rounded-lg border border-[color:var(--line)] leading-relaxed" placeholder="将其他 AI 工具生成的信评报告贴到此处，CreditLens 会做事实一致性、逻辑一致性、风险遗漏、证据缺失、评级维度完整性五项质检…"></textarea>
+          <button class="btn btn-primary w-full mt-3" onclick="runQualityCheck()">🔎 开始质检</button>
+          <button class="btn w-full mt-2" onclick="loadSampleQA()">加载示例报告</button>
+        </div>
+        <div class="card p-4">
+          <div class="text-[13px] font-medium mb-2">质检维度</div>
+          <ul class="text-[12px] text-[color:var(--muted)] space-y-1.5 leading-snug">
+            <li>① 数据一致性：财报数值 vs 报告数值</li>
+            <li>② 结论一致性：判断 vs 支撑证据</li>
+            <li>③ 风险遗漏：材料中风险是否覆盖</li>
+            <li>④ 证据缺失：结论是否引用证据</li>
+            <li>⑤ 维度完整：行业/经营/财务/融资/支持</li>
+          </ul>
+        </div>
+      </section>
+      <section class="col-span-8">
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-[15px] font-medium">质检报告</div>
+            <div id="qaScore"></div>
+          </div>
+          <div id="qaResults" class="text-[13px] text-[color:var(--muted)] leading-relaxed">
+            <div class="p-8 text-center">
+              <div class="text-[40px] mb-2">📋</div>
+              <div>粘贴或加载一份信评报告开始质检</div>
+              <div class="text-[11px] mt-2">质检不替代研究员判断，仅用于辅助复核 AI 生成内容的可信度</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ 页面5：跟踪清单 ============ -->
+  <main id="page-watchlist" class="page max-w-[1440px] mx-auto px-6 py-5">
+    <div class="grid grid-cols-12 gap-5">
+      <section class="col-span-8">
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-[15px] font-medium">研究员跟踪清单</div>
+            <div class="flex gap-2">
+              <button class="btn" onclick="clearWatchlist()">清空</button>
+              <button class="btn btn-primary" onclick="exportWatchlist()">📥 导出</button>
+            </div>
+          </div>
+          <div id="watchlist"></div>
+        </div>
+      </section>
+      <section class="col-span-4 space-y-3">
+        <div class="card p-4">
+          <div class="text-[13px] font-medium mb-2">新增跟踪问题</div>
+          <input id="wlSubject" class="w-full text-[12px] p-2 mb-2 rounded-lg border border-[color:var(--line)]" placeholder="主体（例：A集团）"/>
+          <textarea id="wlQuestion" rows="3" class="w-full text-[12px] p-2 mb-2 rounded-lg border border-[color:var(--line)]" placeholder="跟踪问题（例：银行授信是否有实质变化）"></textarea>
+          <select id="wlLevel" class="w-full text-[12px] p-2 mb-2 rounded-lg border border-[color:var(--line)]">
+            <option value="high">高优先级</option>
+            <option value="mid">中优先级</option>
+            <option value="low">低优先级</option>
+          </select>
+          <button class="btn btn-primary w-full" onclick="addToWatchlist()">+ 加入清单</button>
+        </div>
+        <div class="card p-4">
+          <div class="text-[13px] font-medium mb-2">统计</div>
+          <div id="wlStats" class="text-[12px] text-[color:var(--muted)] space-y-1"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="max-w-[1440px] mx-auto px-6 pb-6 text-[11px] text-[color:var(--muted)] leading-snug">
+    本 Demo 为 2026 易方达基金校园研究分析大赛 AI 信评赛道参赛作品原型，所有主体名称、财务数据、事件均为虚构，仅用于产品演示。系统边界：辅助信用研究，不替代研究员判断，不构成投资建议。
+  </footer>
+</div>
+
+<!-- 模态框：事件详情 -->
+<div class="modal-mask" id="evtModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box p-6" id="evtModalBody"></div>
+</div>
+
+<!-- 抽屉：通知中心 -->
+<div class="drawer" id="drawer">
+  <div class="p-5 border-b border-[color:var(--line)] flex items-center justify-between">
+    <div class="text-[15px] font-medium">实时推送中心</div>
+    <button class="btn" onclick="closeDrawer()">✕</button>
+  </div>
+  <div id="drawerBody" class="p-4 space-y-3 overflow-auto scroll-thin" style="height:calc(100vh - 65px);"></div>
+</div>
+
+<div id="toastHost"></div>
+
+<script>
+// 模拟数据 — 所有主体、行业、事件均为虚构，仅用于Demo演示
+window.ISSUERS = [
+  {
+    id: 'A-GROUP',
+    name: 'A集团',
+    industry: '房地产',
+    rating: 'AA+',
+    outlook: '负面',
+    region: '华东',
+    priority: 'high',
+    priorityScore: 92,
+    events: 5,
+    tags: ['再融资弱化', '销售下滑', '股东质押', '舆情负面'],
+    bondCount: 8,
+    shortDebtRatio: 0.62,
+    spread: 320,
+    spreadChange: 85,
+    finance: {
+      revenue: [412, 388, 356, 298, 246],
+      opCashFlow: [58, 42, 21, -8, -35],
+      shortDebt: [95, 118, 142, 168, 185],
+      years: ['2021', '2022', '2023', '2024', '2025H1']
+    },
+    spreadTrend: [235, 240, 248, 262, 275, 290, 305, 320],
+    spreadDates: ['4W前', '3W前', '2W前', '1W前', '6D', '4D', '2D', '今日'],
+    radar: { 偿债: 32, 盈利: 45, 现金流: 28, 融资: 30, 治理: 55, 行业: 40 },
+    events_detail: [
+      {
+        date: '2026-06-28',
+        source: '公司公告',
+        title: '控股股东所持公司股份被司法冻结,冻结比例占其持股38%',
+        type: '治理/股东风险',
+        weight: 'high'
+      },
+      {
+        date: '2026-06-24',
+        source: '交易所',
+        title: '公司拟发行的3年期中票取消发行,原计划规模15亿元',
+        type: '融资弱化',
+        weight: 'high'
+      },
+      {
+        date: '2026-06-20',
+        source: '评级公告',
+        title: '联合资信将主体评级展望由"稳定"下调至"负面"',
+        type: '评级变动',
+        weight: 'high'
+      },
+      {
+        date: '2026-06-15',
+        source: '半年度经营简报',
+        title: '2026H1合同销售额同比下降42%,回款率降至58%',
+        type: '经营恶化',
+        weight: 'high'
+      },
+      {
+        date: '2026-06-10',
+        source: '财新/主流媒体',
+        title: '媒体报道A集团某区域项目停工,涉及金额约6.2亿元',
+        type: '舆情负面',
+        weight: 'mid'
+      }
+    ],
+    reasoning: [
+      {
+        step: '原始证据',
+        content: '5项异动事件在30天内密集出现,覆盖股东层面、融资层面、评级层面、经营层面和舆情层面。',
+        evidence: ['公告-2026.06.28', '交易所-2026.06.24', '联合资信-2026.06.20', '经营简报-2026.06.15']
+      },
+      {
+        step: '信用含义',
+        content: '股东股权冻结提示股东流动性承压;债券取消发行说明市场认购意愿弱化;评级展望下调进一步压制再融资空间。',
+        evidence: ['融资端多重恶化', '外部支持能力下降']
+      },
+      {
+        step: '影响路径',
+        content: '股东支持弱化 → 债券市场认购意愿下降 → 再融资渠道收窄 → 短期债务滚续压力上升 → 经营现金流不足以覆盖到期债务。',
+        evidence: ['经营现金流已连续3期恶化', '短债占比升至62%']
+      },
+      {
+        step: '研究判断',
+        content: '当前风险主体非单一事件冲击,而是股东、融资、经营、评级四条链路共振,信用资质呈实质性弱化,而非短期噪音。',
+        evidence: ['多因子共振', '不属于市场情绪扰动']
+      },
+      {
+        step: '跟踪问题',
+        content: '1) 银行授信是否随之收缩;2) 8月到期的12亿短融是否有兑付安排;3) 是否有股东层面纾困或战投引入;4) 项目停工范围是否扩大。',
+        evidence: ['需人工复核', '3-7天内跟踪']
+      }
+    ],
+    conclusion: {
+      opinion: '建议将A集团调入重点观察池,并暂停组合内新增中长期限债券。',
+      reasons: [
+        '再融资能力实质性弱化,债券取消发行叠加评级展望下调',
+        '经营现金流连续3期恶化,短债占比升至62%,偿债压力显著',
+        '股东层面股权冻结提示外部支持能力下降',
+        '多事件在30天内共振,已不属于市场情绪扰动'
+      ],
+      actions: [
+        { label: '重点观察池', level: 'danger' },
+        { label: '暂停新增', level: 'danger' },
+        { label: '缩短久期', level: 'warn' },
+        { label: '7天内复核', level: 'warn' }
+      ]
+    }
+  },
+  {
+    id: 'B-CITY',
+    name: 'B城投',
+    industry: '城投',
+    rating: 'AA+',
+    outlook: '稳定',
+    region: '中部',
+    priority: 'high',
+    priorityScore: 78,
+    events: 3,
+    tags: ['区域财力弱', '短债占比高', '土地出让下滑'],
+    bondCount: 12,
+    shortDebtRatio: 0.48,
+    spread: 195,
+    spreadChange: 32,
+    finance: {
+      revenue: [86, 92, 95, 88, 41],
+      opCashFlow: [12, 15, 8, -3, -12],
+      shortDebt: [45, 52, 58, 68, 74],
+      years: ['2021', '2022', '2023', '2024', '2025H1']
+    },
+    spreadTrend: [168, 172, 175, 180, 185, 188, 192, 195],
+    spreadDates: ['4W前', '3W前', '2W前', '1W前', '6D', '4D', '2D', '今日'],
+    radar: { 偿债: 45, 盈利: 55, 现金流: 40, 融资: 42, 治理: 65, 行业: 48 },
+    events_detail: [
+      {
+        date: '2026-06-26',
+        source: '地方财政公告',
+        title: '所在区域2026H1土地出让收入同比下降38%',
+        type: '区域基本面',
+        weight: 'high'
+      },
+      {
+        date: '2026-06-22',
+        source: '公司公告',
+        title: '公司短期融资券"26B城投SCP002"完成兑付,规模8亿',
+        type: '偿债正面',
+        weight: 'mid'
+      },
+      {
+        date: '2026-06-18',
+        source: '半年度公告',
+        title: '截至2026H1有息负债余额较年初增长18%,新增以短期为主',
+        type: '债务压力',
+        weight: 'high'
+      }
+    ],
+    reasoning: [
+      {
+        step: '原始证据',
+        content: '3项事件呈现"区域财力弱化+短债滚续加速"的组合。',
+        evidence: ['财政公告-2026.06.26', '半年度公告-2026.06.18']
+      },
+      {
+        step: '信用含义',
+        content: '土地出让下滑直接影响政府支持能力;短债占比上升说明再融资周期缩短。',
+        evidence: ['政府支持弱化', '滚续压力']
+      },
+      {
+        step: '影响路径',
+        content: '区域财政下滑 → 政府隐性支持能力下降 → 平台外部现金流入减少 → 依赖债券市场滚续 → 短债占比升高。',
+        evidence: ['本轮尚有正面事件缓冲', '短融按期兑付']
+      },
+      {
+        step: '研究判断',
+        content: '基本面弱化但兑付纪律仍在,属于"结构性走弱",尚未进入实质风险区间。',
+        evidence: ['非事件驱动', '需观察政府端']
+      },
+      {
+        step: '跟踪问题',
+        content: '1) 下半年土地出让节奏;2) 政府对平台的注资或资产划转是否落地;3) 有息负债增速是否收敛。',
+        evidence: ['季度跟踪', '关注政策文件']
+      }
+    ],
+    conclusion: {
+      opinion: '建议将B城投调入常规观察池,组合内维持现有敞口但暂停加仓。',
+      reasons: [
+        '区域财力有实质弱化,但兑付纪律仍稳定',
+        '短债占比上升但整体债务规模可控',
+        '需持续跟踪政府端支持力度变化'
+      ],
+      actions: [
+        { label: '常规观察', level: 'warn' },
+        { label: '暂停加仓', level: 'warn' },
+        { label: '季度复核', level: 'info' }
+      ]
+    }
+  },
+  {
+    id: 'C-COAL',
+    name: 'C能源',
+    industry: '煤炭',
+    rating: 'AAA',
+    outlook: '稳定',
+    region: '华北',
+    priority: 'mid',
+    priorityScore: 55,
+    events: 2,
+    tags: ['行业价格回落', '现金流稳健'],
+    bondCount: 6,
+    shortDebtRatio: 0.28,
+    spread: 78,
+    spreadChange: 8,
+    finance: {
+      revenue: [520, 680, 720, 685, 315],
+      opCashFlow: [95, 165, 185, 160, 68],
+      shortDebt: [58, 62, 65, 68, 70],
+      years: ['2021', '2022', '2023', '2024', '2025H1']
+    },
+    spreadTrend: [70, 71, 72, 74, 75, 76, 77, 78],
+    spreadDates: ['4W前', '3W前', '2W前', '1W前', '6D', '4D', '2D', '今日'],
+    radar: { 偿债: 78, 盈利: 65, 现金流: 82, 融资: 80, 治理: 85, 行业: 52 },
+    events_detail: [
+      {
+        date: '2026-06-25',
+        source: '行业数据',
+        title: '动力煤价格较年初回落22%,行业景气度承压',
+        type: '行业变化',
+        weight: 'mid'
+      },
+      {
+        date: '2026-06-16',
+        source: '公司公告',
+        title: '2026H1经营现金流68亿,同比下降18%但仍显著为正',
+        type: '经营中性',
+        weight: 'mid'
+      }
+    ],
+    reasoning: [
+      {
+        step: '原始证据',
+        content: '事件集中在行业价格回落带来的盈利压力,主体自身基本面依然稳健。',
+        evidence: ['行业数据', '半年度经营公告']
+      },
+      {
+        step: '信用含义',
+        content: '行业压力尚未传导至主体信用资质,现金流覆盖能力仍充足。',
+        evidence: ['经营现金流正', '短债占比低']
+      },
+      {
+        step: '影响路径',
+        content: '煤价下行 → 盈利收窄 → 但现金流仍可覆盖到期债务和资本开支,不构成再融资压力。',
+        evidence: ['属于周期性扰动']
+      },
+      {
+        step: '研究判断',
+        content: '当前属于行业景气变化,主体资质稳定,不建议改变持仓判断。',
+        evidence: ['行业α风险', '主体β可控']
+      },
+      {
+        step: '跟踪问题',
+        content: '1) 煤价是否继续下探;2) 2026全年经营现金流预期;3) 主要在建项目是否延后。',
+        evidence: ['季度跟踪']
+      }
+    ],
+    conclusion: {
+      opinion: '维持C能源现有持仓判断,信用资质稳健,行业压力尚未构成主体风险。',
+      reasons: [
+        '经营现金流仍充足覆盖到期债务',
+        '短债占比仅28%,融资结构良好',
+        '行业压力属周期性,不改变主体信用逻辑'
+      ],
+      actions: [
+        { label: '维持判断', level: 'info' },
+        { label: '常规跟踪', level: 'info' }
+      ]
+    }
+  },
+  {
+    id: 'D-MFG',
+    name: 'D制造',
+    industry: '装备制造',
+    rating: 'AA',
+    outlook: '稳定',
+    region: '华南',
+    priority: 'mid',
+    priorityScore: 48,
+    events: 2,
+    tags: ['应收账款上升', '订单稳定'],
+    bondCount: 3,
+    shortDebtRatio: 0.35,
+    spread: 148,
+    spreadChange: 12,
+    finance: {
+      revenue: [125, 138, 142, 148, 72],
+      opCashFlow: [15, 12, 8, 5, -2],
+      shortDebt: [22, 25, 28, 32, 35],
+      years: ['2021', '2022', '2023', '2024', '2025H1']
+    },
+    spreadTrend: [135, 138, 140, 142, 144, 145, 147, 148],
+    spreadDates: ['4W前', '3W前', '2W前', '1W前', '6D', '4D', '2D', '今日'],
+    radar: { 偿债: 58, 盈利: 55, 现金流: 42, 融资: 60, 治理: 70, 行业: 65 },
+    events_detail: [
+      {
+        date: '2026-06-27',
+        source: '半年度经营简报',
+        title: '2026H1应收账款周转天数上升至128天,较年初增加22天',
+        type: '经营中性',
+        weight: 'mid'
+      },
+      {
+        date: '2026-06-19',
+        source: '公司公告',
+        title: '公司公告新增订单9.8亿元,同比增长12%',
+        type: '经营正面',
+        weight: 'mid'
+      }
+    ],
+    reasoning: [
+      {
+        step: '原始证据',
+        content: '事件呈现"订单端稳定+现金流回款趋弱"的结构性特征。',
+        evidence: ['经营简报', '订单公告']
+      },
+      {
+        step: '信用含义',
+        content: '收入质量下降但订单基础扎实,属于运营效率问题,非资质问题。',
+        evidence: ['应收周转天数上升']
+      },
+      {
+        step: '影响路径',
+        content: '应收账款上升 → 经营现金流转弱 → 需依赖外部融资补充营运资金 → 短债占比小幅上升。',
+        evidence: ['运营层面压力']
+      },
+      {
+        step: '研究判断',
+        content: '基本面小幅弱化,但尚在可承受范围内,不改变主体信用等级判断。',
+        evidence: ['需观察下半年回款']
+      },
+      {
+        step: '跟踪问题',
+        content: '1) 下半年应收回款节奏;2) 大客户信用情况;3) 银行授信可用额度。',
+        evidence: ['半年度跟踪']
+      }
+    ],
+    conclusion: {
+      opinion: '维持D制造持仓判断,建议关注下半年应收账款回款情况。',
+      reasons: [
+        '订单基础稳定,行业景气尚可',
+        '现金流有边际弱化,但短债规模可控',
+        '需下半年验证回款质量改善'
+      ],
+      actions: [
+        { label: '维持判断', level: 'info' },
+        { label: '半年跟踪', level: 'info' }
+      ]
+    }
+  },
+  {
+    id: 'E-CONSUME',
+    name: 'E消费',
+    industry: '大消费',
+    rating: 'AAA',
+    outlook: '稳定',
+    region: '华东',
+    priority: 'low',
+    priorityScore: 22,
+    events: 1,
+    tags: ['盈利改善'],
+    bondCount: 4,
+    shortDebtRatio: 0.18,
+    spread: 52,
+    spreadChange: -6,
+    finance: {
+      revenue: [285, 298, 315, 342, 178],
+      opCashFlow: [42, 48, 55, 62, 32],
+      shortDebt: [15, 16, 18, 20, 22],
+      years: ['2021', '2022', '2023', '2024', '2025H1']
+    },
+    spreadTrend: [58, 57, 56, 55, 55, 54, 53, 52],
+    spreadDates: ['4W前', '3W前', '2W前', '1W前', '6D', '4D', '2D', '今日'],
+    radar: { 偿债: 88, 盈利: 78, 现金流: 85, 融资: 82, 治理: 88, 行业: 72 },
+    events_detail: [
+      {
+        date: '2026-06-21',
+        source: '半年度公告',
+        title: '2026H1毛利率同比提升1.8个百分点,盈利质量改善',
+        type: '经营正面',
+        weight: 'low'
+      }
+    ],
+    reasoning: [
+      {
+        step: '原始证据',
+        content: '仅1项正面事件,主体基本面持续稳健。',
+        evidence: ['半年度公告']
+      },
+      {
+        step: '信用含义',
+        content: '盈利改善+现金流充裕,信用资质稳中向好。',
+        evidence: ['无负面异动']
+      },
+      {
+        step: '影响路径',
+        content: '经营改善 → 现金流增强 → 债务结构继续优化 → 融资成本有下行空间。',
+        evidence: ['正向循环']
+      },
+      {
+        step: '研究判断',
+        content: '维持AAA评级判断,可考虑作为组合底仓。',
+        evidence: ['安全性高']
+      },
+      {
+        step: '跟踪问题',
+        content: '仅需常规跟踪,无特殊风险点。',
+        evidence: ['季度跟踪']
+      }
+    ],
+    conclusion: {
+      opinion: '维持E消费AAA判断,可作为组合安全垫,常规跟踪即可。',
+      reasons: [
+        '经营指标持续向好',
+        '短债占比仅18%,融资结构健康',
+        '行业景气度稳定'
+      ],
+      actions: [
+        { label: '维持判断', level: 'info' },
+        { label: '常规跟踪', level: 'info' }
+      ]
+    }
+  },
+  {
+    id: 'F-AUTO',
+    name: 'F汽车零部件',
+    industry: '汽车零部件',
+    rating: 'AA',
+    outlook: '稳定',
+    region: '华东',
+    priority: 'mid',
+    priorityScore: 42,
+    events: 2,
+    tags: ['新能源转型', '客户集中'],
+    bondCount: 2,
+    shortDebtRatio: 0.32,
+    spread: 165,
+    spreadChange: 15,
+    finance: {
+      revenue: [82, 88, 95, 102, 55],
+      opCashFlow: [8, 10, 12, 11, 4],
+      shortDebt: [18, 20, 22, 25, 28],
+      years: ['2021', '2022', '2023', '2024', '2025H1']
+    },
+    spreadTrend: [150, 152, 155, 158, 160, 162, 164, 165],
+    spreadDates: ['4W前', '3W前', '2W前', '1W前', '6D', '4D', '2D', '今日'],
+    radar: { 偿债: 60, 盈利: 62, 现金流: 55, 融资: 65, 治理: 70, 行业: 68 },
+    events_detail: [
+      { date: '2026-06-23', source: '公司公告', title: '与主要客户签订5.6亿新能源零部件长期供货协议', type: '经营正面', weight: 'mid' },
+      { date: '2026-06-14', source: '半年度公告', title: '前五大客户收入占比升至72%,较去年同期上升8pct', type: '经营中性', weight: 'mid' }
+    ],
+    reasoning: [
+      { step: '原始证据', content: '订单端向新能源倾斜,但客户集中度上升。', evidence: ['订单公告', '半年度经营'] },
+      { step: '信用含义', content: '业务结构改善但客户集中度构成新的风险敞口。', evidence: ['结构性变化'] },
+      { step: '影响路径', content: '新能源订单增加 → 收入结构改善 → 但客户集中度上升 → 大客户信用变化影响加大。', evidence: ['风险迁移'] },
+      { step: '研究判断', content: '基本面偏中性,需重点跟踪大客户信用状况。', evidence: ['客户端穿透'] },
+      { step: '跟踪问题', content: '1) 前五大客户各自信用状况;2) 新能源业务毛利率;3) 应收账款回款周期。', evidence: ['半年度跟踪'] }
+    ],
+    conclusion: {
+      opinion: '维持F汽车零部件持仓判断,关注客户集中度带来的间接信用风险。',
+      reasons: ['业务向新能源迁移是正向变化', '客户集中度上升需持续跟踪', '短期偿债压力可控'],
+      actions: [{ label: '维持判断', level: 'info' }, { label: '客户穿透', level: 'warn' }]
+    }
+  },
+  {
+    id: 'G-PHARMA',
+    name: 'G医药',
+    industry: '医药',
+    rating: 'AA+',
+    outlook: '稳定',
+    region: '华东',
+    priority: 'low',
+    priorityScore: 28,
+    events: 1,
+    tags: ['集采压力', '现金流稳'],
+    bondCount: 3,
+    shortDebtRatio: 0.22,
+    spread: 88,
+    spreadChange: 4,
+    finance: {
+      revenue: [92, 98, 102, 108, 56],
+      opCashFlow: [18, 22, 25, 24, 12],
+      shortDebt: [10, 12, 13, 14, 15],
+      years: ['2021', '2022', '2023', '2024', '2025H1']
+    },
+    spreadTrend: [84, 85, 85, 86, 86, 87, 88, 88],
+    spreadDates: ['4W前', '3W前', '2W前', '1W前', '6D', '4D', '2D', '今日'],
+    radar: { 偿债: 80, 盈利: 68, 现金流: 78, 融资: 75, 治理: 82, 行业: 60 },
+    events_detail: [
+      { date: '2026-06-17', source: '行业新闻', title: '新一轮集采纳入公司2款主力品种,预计降价40%左右', type: '行业变化', weight: 'mid' }
+    ],
+    reasoning: [
+      { step: '原始证据', content: '集采对主力品种构成收入端压力。', evidence: ['行业新闻'] },
+      { step: '信用含义', content: '收入端有压力,但公司现金流仍可覆盖债务。', evidence: ['经营现金流稳'] },
+      { step: '影响路径', content: '主力品种降价 → 收入承压 → 但成本端和费用端有腾挪空间 → 净利润压力可控。', evidence: ['行业α风险'] },
+      { step: '研究判断', content: '基本面稳中偏弱,不改变主体信用判断。', evidence: ['需下半年验证'] },
+      { step: '跟踪问题', content: '1) 集采落地实际影响;2) 新品种放量节奏;3) 研发投入强度。', evidence: ['季度跟踪'] }
+    ],
+    conclusion: {
+      opinion: '维持G医药信用判断,常规跟踪即可,可保留组合内适度敞口。',
+      reasons: ['集采属于行业周期性冲击', '现金流充足覆盖偿债需求', '新品种放量可对冲'],
+      actions: [{ label: '维持判断', level: 'info' }, { label: '常规跟踪', level: 'info' }]
+    }
+  },
+  {
+    id: 'H-STEEL',
+    name: 'H钢铁',
+    industry: '钢铁',
+    rating: 'AA',
+    outlook: '负面',
+    region: '华北',
+    priority: 'high',
+    priorityScore: 72,
+    events: 3,
+    tags: ['行业下行', '亏损扩大', '债务重压'],
+    bondCount: 4,
+    shortDebtRatio: 0.55,
+    spread: 285,
+    spreadChange: 62,
+    finance: {
+      revenue: [385, 358, 322, 285, 138],
+      opCashFlow: [28, 15, 8, -12, -25],
+      shortDebt: [58, 68, 75, 82, 88],
+      years: ['2021', '2022', '2023', '2024', '2025H1']
+    },
+    spreadTrend: [222, 228, 235, 245, 258, 268, 278, 285],
+    spreadDates: ['4W前', '3W前', '2W前', '1W前', '6D', '4D', '2D', '今日'],
+    radar: { 偿债: 38, 盈利: 30, 现金流: 32, 融资: 42, 治理: 60, 行业: 30 },
+    events_detail: [
+      { date: '2026-06-26', source: '半年度业绩预告', title: '2026H1预计归母净利亏损8-12亿元,同比大幅下滑', type: '经营恶化', weight: 'high' },
+      { date: '2026-06-22', source: '行业数据', title: '螺纹钢价格较年初回落18%,行业需求持续偏弱', type: '行业压力', weight: 'high' },
+      { date: '2026-06-15', source: '公司公告', title: '公司获得地方国资纾困支持函,拟提供25亿流动性支持', type: '外部支持', weight: 'mid' }
+    ],
+    reasoning: [
+      { step: '原始证据', content: '事件呈现"经营恶化+行业下行+纾困介入"三重共振。', evidence: ['业绩预告', '行业数据', '公告'] },
+      { step: '信用含义', content: '主体经营已实质承压,但外部支持函在一定程度上缓冲了短期风险。', evidence: ['支持力度待落实'] },
+      { step: '影响路径', content: '行业下行 → 经营亏损 → 依赖外部支持维持流动性 → 中长期偿债能力仍不确定。', evidence: ['依赖政府支持'] },
+      { step: '研究判断', content: '偏负面,但因有地方国资支持函,不属于即刻风险。', evidence: ['非事件驱动'] },
+      { step: '跟踪问题', content: '1) 支持函资金是否落地;2) 三季度经营是否改善;3) 债务重组或再融资方案。', evidence: ['月度跟踪'] }
+    ],
+    conclusion: {
+      opinion: '建议将H钢铁调入重点观察池,暂停新增,现有敞口关注纾困资金落地情况。',
+      reasons: ['经营已实质亏损', '行业下行趋势短期难反转', '外部支持提供一定缓冲但仍需落实'],
+      actions: [{ label: '重点观察', level: 'danger' }, { label: '暂停新增', level: 'danger' }, { label: '月度跟踪', level: 'warn' }]
+    }
+  },
+  {
+    id: 'I-INFRA',
+    name: 'I基建',
+    industry: '基建',
+    rating: 'AAA',
+    outlook: '稳定',
+    region: '华东',
+    priority: 'low',
+    priorityScore: 18,
+    events: 1,
+    tags: ['订单充裕', '信用稳定'],
+    bondCount: 15,
+    shortDebtRatio: 0.25,
+    spread: 45,
+    spreadChange: -2,
+    finance: {
+      revenue: [685, 720, 758, 792, 415],
+      opCashFlow: [58, 62, 68, 72, 38],
+      shortDebt: [82, 85, 88, 92, 95],
+      years: ['2021', '2022', '2023', '2024', '2025H1']
+    },
+    spreadTrend: [48, 47, 47, 46, 46, 46, 45, 45],
+    spreadDates: ['4W前', '3W前', '2W前', '1W前', '6D', '4D', '2D', '今日'],
+    radar: { 偿债: 85, 盈利: 68, 现金流: 78, 融资: 88, 治理: 90, 行业: 75 },
+    events_detail: [
+      { date: '2026-06-24', source: '公司公告', title: '2026H1新签合同额同比增长15%,订单结构以政府项目为主', type: '经营正面', weight: 'low' }
+    ],
+    reasoning: [
+      { step: '原始证据', content: '仅1项正面事件,基本面稳中向好。', evidence: ['公告'] },
+      { step: '信用含义', content: '订单端与融资端均支撑主体信用稳健。', evidence: ['多重稳定信号'] },
+      { step: '影响路径', content: '订单增长 → 收入端稳定 → 现金流健康 → 融资结构良好。', evidence: ['无负面异动'] },
+      { step: '研究判断', content: '维持AAA判断,可作为组合底仓。', evidence: ['安全性高'] },
+      { step: '跟踪问题', content: '常规跟踪项目回款和应收账款结构。', evidence: ['季度跟踪'] }
+    ],
+    conclusion: {
+      opinion: '维持I基建AAA判断,可作为组合安全垫。',
+      reasons: ['订单充足', '现金流稳定', '融资渠道畅通'],
+      actions: [{ label: '维持判断', level: 'info' }, { label: '常规跟踪', level: 'info' }]
+    }
+  },
+  {
+    id: 'J-TECH',
+    name: 'J科技',
+    industry: '电子科技',
+    rating: 'AA+',
+    outlook: '稳定',
+    region: '华南',
+    priority: 'mid',
+    priorityScore: 38,
+    events: 2,
+    tags: ['研发投入高', '现金流略弱'],
+    bondCount: 2,
+    shortDebtRatio: 0.42,
+    spread: 122,
+    spreadChange: 18,
+    finance: {
+      revenue: [158, 175, 188, 202, 108],
+      opCashFlow: [15, 12, 10, 8, 2],
+      shortDebt: [25, 28, 32, 35, 38],
+      years: ['2021', '2022', '2023', '2024', '2025H1']
+    },
+    spreadTrend: [108, 112, 115, 117, 118, 120, 121, 122],
+    spreadDates: ['4W前', '3W前', '2W前', '1W前', '6D', '4D', '2D', '今日'],
+    radar: { 偿债: 58, 盈利: 60, 现金流: 45, 融资: 62, 治理: 75, 行业: 78 },
+    events_detail: [
+      { date: '2026-06-20', source: '半年度公告', title: '2026H1研发投入占收入比升至14.2%,创历史新高', type: '经营中性', weight: 'mid' },
+      { date: '2026-06-13', source: '公司公告', title: '获得政府产业基金5亿元战略投资,补充营运资金', type: '融资正面', weight: 'mid' }
+    ],
+    reasoning: [
+      { step: '原始证据', content: '事件呈现"研发投入加大+外部融资补充"的结构。', evidence: ['公告', '半年度'] },
+      { step: '信用含义', content: '短期现金流承压但外部融资到位,信用整体稳健。', evidence: ['正负对冲'] },
+      { step: '影响路径', content: '研发投入 → 短期现金流弱化 → 政府基金补充 → 净现金流可控。', evidence: ['结构性调整'] },
+      { step: '研究判断', content: '维持AA+判断,关注研发投入对长期竞争力的正向作用。', evidence: ['战略投入'] },
+      { step: '跟踪问题', content: '1) 政府基金资金到位节奏;2) 研发项目里程碑;3) 应收账款趋势。', evidence: ['季度跟踪'] }
+    ],
+    conclusion: {
+      opinion: '维持J科技AA+判断,可保留组合内适度敞口,关注研发投入回报周期。',
+      reasons: ['战略投入构成长期竞争力', '外部融资渠道畅通', '短期偿债压力可控'],
+      actions: [{ label: '维持判断', level: 'info' }, { label: '季度跟踪', level: 'info' }]
+    }
+  }
+];
+
+window.SUMMARY = {
+  total: 10,
+  high: 3,
+  mid: 4,
+  low: 3,
+  eventsToday: 24,
+  eventsWeek: 82,
+  updated: '2026-07-01 15:00'
+};
+
+</script>
+<script>
+// 信元 CreditLens - 交互逻辑（多页面 + 搜索 + AI 对话 + 事件推送 + 质检 + 跟踪清单 + 导出）
+(function () {
+  const state = {
+    filter: 'all',
+    industryFilter: 'all',
+    currentId: 'A-GROUP',
+    charts: {},
+    page: 'dashboard',
+    watchlist: [],
+    notifications: [],
+    chatHistory: []
+  };
+
+  // ---------- 工具 ----------
+  function toast(msg, type='ok') {
+    const el = document.createElement('div');
+    el.className = 'toast' + (type==='err'?' err':type==='warn'?' warn':'');
+    el.textContent = msg;
+    document.getElementById('toastHost').appendChild(el);
+    setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300);},2400);
+  }
+  function priorityBadge(p) {
+    const map = { high: ['prio-high','高'], mid: ['prio-mid','中'], low: ['prio-low','低'] };
+    const [cls, label] = map[p]; return `<span class="chip ${cls}">${label}优先级</span>`;
+  }
+  function currentIssuer() { return ISSUERS.find(x => x.id === state.currentId); }
+
+  // ---------- 顶部信息 ----------
+  document.getElementById('updated').textContent = SUMMARY.updated;
+  document.getElementById('tot').textContent = SUMMARY.total;
+  document.getElementById('et').textContent = SUMMARY.eventsToday;
+  document.getElementById('c-high').textContent = SUMMARY.high;
+  document.getElementById('c-mid').textContent = SUMMARY.mid;
+  document.getElementById('c-low').textContent = SUMMARY.low;
+
+  // ---------- 页面切换 ----------
+  window.switchPage = function(page) {
+    state.page = page;
+    document.querySelectorAll('.tab-item').forEach(el => el.classList.toggle('tab-active', el.dataset.page===page));
+    document.querySelectorAll('.page').forEach(el => el.classList.remove('on'));
+    document.getElementById('page-'+page).classList.add('on');
+    if (page==='reasoning') renderReasoningPage();
+    if (page==='assistant') renderAssistantPage();
+    if (page==='watchlist') renderWatchlist();
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
+
+  // ---------- 筛选 ----------
+  window.applyFilter = function(f) {
+    state.filter = f;
+    document.querySelectorAll('#filters .btn').forEach(b => b.classList.toggle('btn-active', b.dataset.f===f));
+    renderIssuerList();
+  };
+
+  document.querySelectorAll('#filters .btn').forEach(btn => {
+    btn.addEventListener('click', () => applyFilter(btn.dataset.f));
+  });
+
+  // 行业筛选
+  function renderIndustryFilters() {
+    const inds = [...new Set(ISSUERS.map(x => x.industry))];
+    const el = document.getElementById('indFilters');
+    el.innerHTML = `<button class="btn ${state.industryFilter==='all'?'btn-active':''}" data-ind="all">所有行业</button>` +
+      inds.map(i => `<button class="btn ${state.industryFilter===i?'btn-active':''}" data-ind="${i}">${i}</button>`).join('');
+    el.querySelectorAll('.btn').forEach(b => b.addEventListener('click', () => {
+      state.industryFilter = b.dataset.ind;
+      renderIndustryFilters();
+      renderIssuerList();
+    }));
+  }
+
+  // ---------- 主体池列表 ----------
+  function renderIssuerList() {
+    const el = document.getElementById('issuerList');
+    const rows = ISSUERS
+      .filter(x => state.filter==='all' || x.priority===state.filter)
+      .filter(x => state.industryFilter==='all' || x.industry===state.industryFilter)
+      .sort((a,b) => b.priorityScore - a.priorityScore)
+      .map(x => `
+        <div class="issuer-row px-3 py-3 border-b border-[color:var(--line)] ${x.id===state.currentId?'on':''}" data-id="${x.id}">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-[14px] font-medium">${x.name}</span>
+              <span class="chip chip-gray">${x.industry}</span>
+              <span class="chip chip-blue">${x.rating}</span>
+            </div>
+            ${priorityBadge(x.priority)}
+          </div>
+          <div class="mt-1 text-[11px] text-[color:var(--muted)] flex items-center gap-3 flex-wrap">
+            <span>异动 ${x.events} 项</span>
+            <span>短债占比 ${(x.shortDebtRatio*100).toFixed(0)}%</span>
+            <span>利差 ${x.spread}bp <span style="color:${x.spreadChange>=0?'#A32D2D':'#0F6E56'}">(${x.spreadChange>=0?'+':''}${x.spreadChange})</span></span>
+          </div>
+          <div class="mt-2 flex flex-wrap gap-1">
+            ${x.tags.map(t=>`<span class="chip">${t}</span>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    el.innerHTML = rows || '<div class="p-6 text-center text-[12px] text-[color:var(--muted)]">当前筛选无主体</div>';
+    el.querySelectorAll('.issuer-row').forEach(row => {
+      row.addEventListener('click', () => {
+        state.currentId = row.dataset.id;
+        renderIssuerList();
+        renderDetail();
+        toast(`已切换至 ${currentIssuer().name}`);
+      });
+    });
+  }
+
+  // ---------- 详情渲染（主看板） ----------
+  function renderHeader() {
+    const x = currentIssuer();
+    document.getElementById('issuerHeader').innerHTML = `
+      <div class="fade-in">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <div class="text-[18px] font-medium">${x.name}</div>
+              <span class="chip chip-gray">${x.industry}</span>
+              <span class="chip chip-blue">${x.rating} · 展望${x.outlook}</span>
+              <span class="chip">${x.region}</span>
+              ${priorityBadge(x.priority)}
+            </div>
+            <div class="mt-2 text-[12px] text-[color:var(--muted)]">
+              存量债券 ${x.bondCount} 只 · 短债占比 ${(x.shortDebtRatio*100).toFixed(0)}% · 30天异动 ${x.events} 项 · 综合优先级评分 <span class="text-[color:var(--ink)] font-medium">${x.priorityScore}</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-[11px] text-[color:var(--muted)]">信用利差</div>
+            <div class="text-[22px] font-medium">${x.spread}<span class="text-[12px] text-[color:var(--muted)] ml-1">bp</span></div>
+            <div class="text-[12px]" style="color:${x.spreadChange>=0?'#A32D2D':'#0F6E56'}">30日 ${x.spreadChange>=0?'+':''}${x.spreadChange} bp</div>
+          </div>
+        </div>
+        <div class="mt-3 flex flex-wrap gap-2 items-center">
+          ${x.tags.map(t=>`<span class="chip chip-amber">${t}</span>`).join('')}
+          <button class="btn ml-auto" onclick="askInAssistant()">💬 在 AI 助手中问</button>
+          <button class="btn btn-primary" onclick="addCurrentToWatchlist()">+ 加入跟踪</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderReasoning() {
+    const x = currentIssuer();
+    document.getElementById('reasoning').innerHTML = x.reasoning.map((s,i)=>`
+      <div class="flex gap-3 fade-in">
+        <div class="flex flex-col items-center">
+          <div class="step-dot"></div>
+          ${i<x.reasoning.length-1?'<div class="step-line flex-1 mt-1"></div>':''}
+        </div>
+        <div class="flex-1 pb-3 border-b border-[color:var(--line)]">
+          <div class="text-[12px] text-[color:var(--muted)]">Step ${i+1}</div>
+          <div class="text-[13px] font-medium mt-0.5">${s.step}</div>
+          <div class="text-[13px] leading-relaxed mt-1">${s.content}</div>
+          <div class="mt-2">
+            ${s.evidence.map((e,j)=>`<span class="evi-badge" onclick="showEvidence('${x.id}',${i},${j})">📎 ${e}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function eventChip(type) {
+    if (['恶化','弱化','压力','风险','负面','下行'].some(k=>type.includes(k))) return 'chip-red';
+    if (['变动','中性','变化'].some(k=>type.includes(k))) return 'chip-amber';
+    if (['正面','支持','稳','偿债正面'].some(k=>type.includes(k))) return 'chip-green';
+    return 'chip-gray';
+  }
+
+  function renderEvents() {
+    const x = currentIssuer();
+    document.getElementById('events').innerHTML = x.events_detail.map((e,i)=>`
+      <div class="p-3 rounded-lg border border-[color:var(--line)] fade-in cursor-pointer hover:border-[color:#B4B2A9]" style="background:#FAF8F2" onclick="showEventDetail('${x.id}',${i})">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="chip ${eventChip(e.type)}">${e.type}</span>
+            <span class="text-[11px] text-[color:var(--muted)]">${e.source}</span>
+          </div>
+          <span class="text-[11px] text-[color:var(--muted)]">${e.date}</span>
+        </div>
+        <div class="mt-1 text-[13px] leading-snug">${e.title}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderConclusion() {
+    const x = currentIssuer();
+    const c = x.conclusion;
+    document.getElementById('conclusion').innerHTML = `
+      <div class="fade-in">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="chip chip-green">AI 研究结论</span>
+          <span class="text-[11px] text-[color:var(--muted)]">附证据链 · 可复核</span>
+        </div>
+        <div class="text-[14px] leading-relaxed font-medium">${c.opinion}</div>
+        <div class="mt-3">
+          <div class="text-[12px] text-[color:var(--muted)] mb-1">支撑逻辑</div>
+          <ul class="text-[13px] leading-relaxed space-y-1 list-disc pl-4">
+            ${c.reasons.map(r=>`<li>${r}</li>`).join('')}
+          </ul>
+        </div>
+        <div class="mt-3">
+          <div class="text-[12px] text-[color:var(--muted)] mb-1.5">建议动作</div>
+          <div class="flex flex-wrap gap-2">
+            ${c.actions.map(a=>`<span class="px-2.5 py-1 rounded-md text-[12px] action-${a.level}">${a.label}</span>`).join('')}
+          </div>
+        </div>
+        <div class="mt-3 text-[11px] text-[color:var(--muted)] leading-snug border-t border-[color:var(--line)] pt-2">
+          本结论由信元 Agent 基于信用研究框架与多源证据生成，不构成投资建议。
+        </div>
+      </div>
+    `;
+  }
+
+  // ---------- 图表 ----------
+  function destroyChart(k){ if(state.charts[k]){ state.charts[k].destroy(); state.charts[k]=null; } }
+  function renderCharts() {
+    const x = currentIssuer();
+    destroyChart('fin');
+    state.charts.fin = new Chart(document.getElementById('finChart'), {
+      type:'line',
+      data:{ labels:x.finance.years, datasets:[
+        {label:'收入', data:x.finance.revenue, borderColor:'#185FA5', backgroundColor:'rgba(24,95,165,.08)', tension:.3, borderWidth:2, pointRadius:3},
+        {label:'经营现金流', data:x.finance.opCashFlow, borderColor:'#0F6E56', backgroundColor:'rgba(15,110,86,.08)', tension:.3, borderWidth:2, pointRadius:3},
+        {label:'短期债务', data:x.finance.shortDebt, borderColor:'#A32D2D', backgroundColor:'rgba(163,45,45,.08)', tension:.3, borderWidth:2, pointRadius:3, borderDash:[4,3]}
+      ]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{position:'bottom', labels:{font:{size:11}, boxWidth:10}}},
+        scales:{ x:{ticks:{font:{size:10}}}, y:{ticks:{font:{size:10}}}}}
+    });
+    destroyChart('spd');
+    state.charts.spd = new Chart(document.getElementById('spdChart'), {
+      type:'line',
+      data:{ labels:x.spreadDates, datasets:[{ label:'利差', data:x.spreadTrend, borderColor:'#BA7517', backgroundColor:'rgba(186,117,23,.12)', fill:true, tension:.35, borderWidth:2, pointRadius:3 }]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{ x:{ticks:{font:{size:10}}}, y:{ticks:{font:{size:10}}}}}
+    });
+    destroyChart('radar');
+    state.charts.radar = new Chart(document.getElementById('radarChart'), {
+      type:'radar',
+      data:{ labels:Object.keys(x.radar), datasets:[{label:'当前', data:Object.values(x.radar), borderColor:'#0F6E56', backgroundColor:'rgba(15,110,86,.18)', borderWidth:2, pointRadius:2}]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{ r:{min:0,max:100,ticks:{display:false,stepSize:20},pointLabels:{font:{size:11}},grid:{color:'#E5E3DA'},angleLines:{color:'#E5E3DA'}}}}
+    });
+  }
+
+  function renderDetail() {
+    renderHeader(); renderReasoning(); renderEvents(); renderConclusion(); renderCharts();
+  }
+
+  // ---------- 搜索 ----------
+  const searchInput = document.getElementById('searchInput');
+  const searchDropdown = document.getElementById('searchDropdown');
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    if (!q) { searchDropdown.classList.add('hidden'); return; }
+    const results = [];
+    ISSUERS.forEach(x => {
+      if ((x.name+x.industry+x.tags.join('')+x.region).toLowerCase().includes(q)) {
+        results.push({type:'主体', id:x.id, label:x.name, sub:`${x.industry} · ${x.rating}`});
+      }
+      x.events_detail.forEach((e,i) => {
+        if ((e.title+e.type).toLowerCase().includes(q)) {
+          results.push({type:'事件', id:x.id, eIdx:i, label:e.title, sub:`${x.name} · ${e.date}`});
+        }
+      });
+    });
+    if (!results.length) {
+      searchDropdown.innerHTML = '<div class="p-4 text-[12px] text-[color:var(--muted)] text-center">未找到匹配结果</div>';
+    } else {
+      searchDropdown.innerHTML = results.slice(0,10).map(r=>`
+        <div class="px-3 py-2 border-b border-[color:var(--line)] hover:bg-[color:#F5F3EA] cursor-pointer text-[12px]" data-id="${r.id}" data-e="${r.eIdx??''}">
+          <div class="flex items-center gap-2"><span class="chip chip-blue">${r.type}</span><span class="font-medium">${r.label}</span></div>
+          <div class="text-[11px] text-[color:var(--muted)] mt-0.5">${r.sub}</div>
+        </div>
+      `).join('');
+      searchDropdown.querySelectorAll('[data-id]').forEach(el => el.addEventListener('click', () => {
+        state.currentId = el.dataset.id;
+        if (state.page !== 'dashboard') switchPage('dashboard');
+        renderIssuerList(); renderDetail();
+        searchInput.value=''; searchDropdown.classList.add('hidden');
+        if (el.dataset.e !== '') setTimeout(()=>showEventDetail(el.dataset.id, +el.dataset.e), 250);
+      }));
+    }
+    searchDropdown.classList.remove('hidden');
+  });
+  document.addEventListener('click', (e)=>{
+    if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) searchDropdown.classList.add('hidden');
+  });
+
+  // ---------- 事件模态框 ----------
+  window.showEventDetail = function(id, i) {
+    const x = ISSUERS.find(x=>x.id===id); const e = x.events_detail[i];
+    document.getElementById('evtModalBody').innerHTML = `
+      <div class="flex items-start justify-between mb-3">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="chip ${eventChip(e.type)}">${e.type}</span>
+            <span class="chip">${e.source}</span>
+            <span class="chip">${e.date}</span>
+          </div>
+          <div class="text-[16px] font-medium mt-2">${e.title}</div>
+          <div class="text-[12px] text-[color:var(--muted)] mt-1">主体：${x.name} · ${x.industry} · ${x.rating}</div>
+        </div>
+        <button class="btn" onclick="closeModal()">✕</button>
+      </div>
+      <div class="mt-4 border-t border-[color:var(--line)] pt-4">
+        <div class="text-[12px] text-[color:var(--muted)] mb-1">AI 分析（证据链五步）</div>
+        <div class="space-y-3 mt-2 text-[13px] leading-relaxed">
+          <div><span class="chip chip-blue">Step 1 · 事件识别</span> ${e.title}</div>
+          <div><span class="chip chip-blue">Step 2 · 信用含义</span> 该事件属于「${e.type}」，权重等级 ${e.weight||'中'}。</div>
+          <div><span class="chip chip-blue">Step 3 · 影响路径</span> 可能通过「${e.type}」影响主体的偿债/融资/经营/治理链条，需结合其他维度共振判断。</div>
+          <div><span class="chip chip-blue">Step 4 · 研究判断</span> 结合主体当前短债占比 ${(x.shortDebtRatio*100).toFixed(0)}%、利差 ${x.spread}bp、评级 ${x.rating}${x.outlook==='负面'?'（展望负面）':''}，综合判断此事件${e.weight==='high'?'具有较高信用影响':'需与其他事件叠加评估'}。</div>
+          <div><span class="chip chip-blue">Step 5 · 跟踪问题</span> 是否引发评级机构进一步动作？是否影响银行授信？债券估值是否走阔？</div>
+        </div>
+      </div>
+      <div class="mt-4 flex gap-2">
+        <button class="btn btn-primary" onclick="closeModal();addCurrentToWatchlist('${e.title}')">+ 加入跟踪清单</button>
+        <button class="btn" onclick="closeModal()">关闭</button>
+      </div>
+    `;
+    document.getElementById('evtModal').classList.add('on');
+  };
+  window.closeModal = function(){ document.getElementById('evtModal').classList.remove('on'); };
+
+  window.showEvidence = function(id, i, j) {
+    const x = ISSUERS.find(x=>x.id===id); const s = x.reasoning[i]; const ev = s.evidence[j];
+    document.getElementById('evtModalBody').innerHTML = `
+      <div class="flex items-start justify-between mb-3">
+        <div>
+          <span class="chip chip-blue">证据引用</span>
+          <div class="text-[16px] font-medium mt-2">${ev}</div>
+          <div class="text-[12px] text-[color:var(--muted)] mt-1">来自 ${x.name} · 推理 Step ${i+1}</div>
+        </div>
+        <button class="btn" onclick="closeModal()">✕</button>
+      </div>
+      <div class="mt-4 border-t border-[color:var(--line)] pt-4 text-[13px] leading-relaxed">
+        <div class="text-[12px] text-[color:var(--muted)] mb-1">推理步骤所属结论</div>
+        <div class="p-3 rounded-lg" style="background:#F5F3EA">${s.content}</div>
+        <div class="mt-3 text-[12px] text-[color:var(--muted)]">在真实场景中，此处会展开原文段落、数据来源链接与时间戳，供研究员一键复核。</div>
+      </div>
+    `;
+    document.getElementById('evtModal').classList.add('on');
+  };
+
+  // ---------- 模拟推送 ----------
+  const PUSH_TEMPLATES = [
+    {id:'A-GROUP', title:'A集团一致行动人再度增持解押股份 0.5%', type:'治理/中性', source:'公司公告', weight:'mid'},
+    {id:'H-STEEL', title:'H钢铁获地方国资纾困专项贷款 20 亿元签约', type:'融资支持', source:'公司公告', weight:'high'},
+    {id:'B-CITY', title:'B城投所在区域上半年一般公共预算收入同比下滑 6.2%', type:'外部支持弱化', source:'政府披露', weight:'high'},
+    {id:'F-AUTO', title:'F汽车零部件核心客户产量指引下调 8%', type:'经营风险', source:'行业新闻', weight:'high'},
+    {id:'D-CHEM', title:'D化工原料成本环比下降 4%，毛利率有所修复', type:'盈利正面', source:'行业数据', weight:'mid'}
+  ];
+  window.simulatePush = function() {
+    const p = PUSH_TEMPLATES[Math.floor(Math.random()*PUSH_TEMPLATES.length)];
+    const x = ISSUERS.find(i=>i.id===p.id);
+    const now = new Date();
+    const time = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    state.notifications.unshift({...p, time, subject:x.name});
+    document.getElementById('notifCount').textContent = state.notifications.length + 3;
+    toast(`📡 新推送：${x.name} · ${p.title.slice(0,20)}…`, p.weight==='high' && !p.type.includes('正面') && !p.type.includes('支持')?'err':'ok');
+    // 追加到主体事件列表顶部
+    if (x) {
+      x.events_detail.unshift({date:'刚刚', source:p.source, title:p.title, type:p.type, weight:p.weight});
+      x.events++;
+      if (state.currentId === x.id && state.page==='dashboard') renderEvents();
+      renderIssuerList();
+    }
+    if (document.getElementById('drawer').classList.contains('on')) renderDrawer();
+  };
+
+  window.openDrawer = function() { document.getElementById('drawer').classList.add('on'); renderDrawer(); };
+  window.closeDrawer = function() { document.getElementById('drawer').classList.remove('on'); };
+  function renderDrawer() {
+    const el = document.getElementById('drawerBody');
+    const defaults = [
+      {subject:'A集团', title:'控股股东所持股份被司法冻结', type:'治理/股东风险', time:'09:45', weight:'high'},
+      {subject:'H钢铁', title:'地方国资完成对 H 钢铁的股权重组签约', type:'融资支持', time:'11:20', weight:'high'},
+      {subject:'B城投', title:'区域土地出让收入连续三个季度同比下滑', type:'外部支持弱化', time:'13:10', weight:'mid'}
+    ];
+    const all = [...state.notifications, ...defaults];
+    el.innerHTML = all.length ? all.map(n => `
+      <div class="p-3 rounded-lg border border-[color:var(--line)] slide-in cursor-pointer hover:border-[color:#B4B2A9]" style="background:#FAF8F2" onclick="jumpTo('${n.id||''}','${n.subject}')">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="chip ${eventChip(n.type)}">${n.type}</span>
+            <span class="text-[11px] text-[color:var(--muted)]">${n.subject}</span>
+          </div>
+          <span class="text-[11px] text-[color:var(--muted)]">${n.time}</span>
+        </div>
+        <div class="mt-1 text-[13px] leading-snug">${n.title}</div>
+      </div>
+    `).join('') : '<div class="text-center text-[12px] text-[color:var(--muted)] py-8">暂无推送</div>';
+  }
+  window.jumpTo = function(id, subject) {
+    if (id) { state.currentId=id; renderIssuerList(); renderDetail(); }
+    else {
+      const found = ISSUERS.find(x=>x.name===subject);
+      if (found) { state.currentId=found.id; renderIssuerList(); renderDetail(); }
+    }
+    closeDrawer();
+    if (state.page!=='dashboard') switchPage('dashboard');
+  };
+
+  // ---------- 证据链推理页 ----------
+  function renderReasoningPage() {
+    const list = document.getElementById('reasoningIssuerList');
+    list.innerHTML = ISSUERS.sort((a,b)=>b.priorityScore-a.priorityScore).map(x=>`
+      <div class="issuer-row px-3 py-2 border-b border-[color:var(--line)] ${x.id===state.currentId?'on':''}" onclick="pickReasoning('${x.id}')">
+        <div class="flex items-center justify-between">
+          <div class="text-[13px] font-medium">${x.name}</div>
+          ${priorityBadge(x.priority)}
+        </div>
+        <div class="text-[11px] text-[color:var(--muted)] mt-0.5">${x.industry} · 异动 ${x.events} 项</div>
+      </div>
+    `).join('');
+    const x = currentIssuer();
+    document.getElementById('reasoningHeader').innerHTML = `
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="text-[18px] font-medium">${x.name}</div>
+            <span class="chip chip-gray">${x.industry}</span>
+            <span class="chip chip-blue">${x.rating}</span>
+            ${priorityBadge(x.priority)}
+          </div>
+          <div class="text-[12px] text-[color:var(--muted)] mt-1">${x.conclusion.opinion}</div>
+        </div>
+        <div class="text-right">
+          <div class="text-[11px] text-[color:var(--muted)]">利差 / 优先级评分</div>
+          <div class="text-[14px] font-medium">${x.spread}bp · ${x.priorityScore}</div>
+        </div>
+      </div>
+    `;
+    renderReasoningFullSteps();
+  }
+  function renderReasoningFullSteps() {
+    const x = currentIssuer();
+    document.getElementById('reasoningFull').innerHTML = x.reasoning.map((s,i)=>`
+      <div class="fade-in p-4 rounded-xl" style="background:#FAF8F2;border:1px solid var(--line)">
+        <div class="flex items-start gap-3">
+          <div class="rounded-full flex items-center justify-center flex-shrink-0" style="width:32px;height:32px;background:#0F6E56;color:#fff;font-size:13px">${i+1}</div>
+          <div class="flex-1">
+            <div class="text-[15px] font-medium">${s.step}</div>
+            <div class="text-[13px] leading-relaxed mt-2">${s.content}</div>
+            <div class="mt-3">
+              <div class="text-[11px] text-[color:var(--muted)] mb-1">引用证据</div>
+              ${s.evidence.map((e,j)=>`<span class="evi-badge" onclick="showEvidence('${x.id}',${i},${j})">📎 ${e}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+  window.pickReasoning = function(id){ state.currentId=id; renderReasoningPage(); };
+  window.rerunReasoning = function() {
+    toast('🔄 重新推理中…');
+    const el = document.getElementById('reasoning');
+    el.innerHTML = '<div class="p-6 text-center text-[13px] text-[color:var(--muted)]"><span class="pulse">Agent 正在整合最新事件与证据…</span></div>';
+    setTimeout(()=>{ renderReasoning(); toast('推理已更新'); }, 900);
+  };
+  window.rerunReasoningFull = function() {
+    toast('🔄 重新推理中…');
+    const el = document.getElementById('reasoningFull');
+    el.innerHTML = '<div class="p-6 text-center text-[13px] text-[color:var(--muted)]"><span class="pulse">Agent 正在整合最新事件与证据…</span></div>';
+    setTimeout(()=>{ renderReasoningFullSteps(); toast('推理已更新'); }, 900);
+  };
+  window.downloadReasoning = function() {
+    const x = currentIssuer();
+    const text = `【${x.name}】证据链推理\n\n` + x.reasoning.map((s,i)=>`Step ${i+1} · ${s.step}\n${s.content}\n引用：${s.evidence.join('；')}\n`).join('\n');
+    download(`${x.name}-证据链推理.txt`, text);
+  };
+
+  // ---------- AI 研究助手 ----------
+  function renderAssistantPage() {
+    const x = currentIssuer();
+    document.getElementById('assistantSubject').innerHTML = `
+      <div class="p-3 rounded-lg border border-[color:var(--line)]" style="background:#FAF8F2">
+        <div class="flex items-center gap-2">
+          <div class="text-[14px] font-medium">${x.name}</div>
+          ${priorityBadge(x.priority)}
+        </div>
+        <div class="text-[11px] text-[color:var(--muted)] mt-1">${x.industry} · ${x.rating} · 30日异动 ${x.events} 项</div>
+        <button class="btn w-full mt-2" onclick="switchPage('dashboard')">切换主体 →</button>
+      </div>
+    `;
+    if (!state.chatHistory.length) {
+      appendChat('ai', `你好，我是 CreditLens Agent。我已经加载了主体池中 10 家发债主体的公告、财报、评级、舆情等多维证据。当前研究主体为 <b>${x.name}</b>，你可以直接向我提问，也可以点左侧推荐问题。`);
+    } else {
+      renderChat();
+    }
+  }
+  function appendChat(role, content) {
+    state.chatHistory.push({role, content, ts: Date.now()});
+    renderChat();
+  }
+  function renderChat() {
+    const el = document.getElementById('chatWindow');
+    if (!el) return;
+    el.innerHTML = state.chatHistory.map(m => {
+      if (m.role==='user') {
+        return `<div class="flex justify-end"><div class="chat-user px-3.5 py-2.5 rounded-2xl rounded-tr-md max-w-[75%] text-[13px] leading-relaxed">${m.content}</div></div>`;
+      }
+      return `<div class="flex gap-2 items-start">
+        <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-[11px]" style="background:#0F6E56;color:#fff">信</div>
+        <div class="chat-ai px-3.5 py-2.5 rounded-2xl rounded-tl-md max-w-[85%] text-[13px] leading-relaxed">${m.content}</div>
+      </div>`;
+    }).join('');
+    el.scrollTop = el.scrollHeight;
+  }
+  window.clearChat = function(){ state.chatHistory=[]; renderAssistantPage(); };
+  window.ask = function(q){ document.getElementById('chatInput').value = q; sendChat(); };
+  window.askInAssistant = function(){ switchPage('assistant'); };
+  window.sendChat = function() {
+    const inp = document.getElementById('chatInput');
+    const q = inp.value.trim(); if (!q) return;
+    appendChat('user', q); inp.value = '';
+    // 模拟"打字中"
+    state.chatHistory.push({role:'ai', content:'<span class="typing">思考中…</span>', ts:Date.now()});
+    renderChat();
+    setTimeout(() => {
+      state.chatHistory.pop();
+      appendChat('ai', generateAnswer(q));
+    }, 900);
+  };
+
+  function generateAnswer(q) {
+    const x = currentIssuer();
+    const c = x.conclusion;
+    // 简单关键词路由
+    if (/风险|恶化|异动|问题/.test(q)) {
+      return `围绕 <b>${x.name}</b> 的信用风险，我识别到 ${x.events} 项异动，核心风险包括：<br/>` +
+             `<ul class="list-disc pl-4 mt-1 space-y-1">${x.tags.map(t=>`<li>${t}</li>`).join('')}</ul>` +
+             `<div class="mt-2">综合评估：<b>${c.opinion}</b></div>` +
+             `<div class="mt-2 text-[11px] text-[color:var(--muted)]">证据来源：${x.events_detail.slice(0,3).map(e=>e.source).join('、')}等。可到「证据链推理」页查看完整链条。</div>`;
+    }
+    if (/持仓|建议|动作/.test(q)) {
+      return `针对持仓 <b>${x.name}</b> 相关债券，建议动作分层如下：<br/>` +
+             c.actions.map(a=>`<span class="px-2 py-0.5 rounded action-${a.level} text-[12px] mr-1 inline-block mt-1">${a.label}</span>`).join('') +
+             `<div class="mt-2">当前短债占比 ${(x.shortDebtRatio*100).toFixed(0)}%，30日利差 ${x.spreadChange>=0?'+':''}${x.spreadChange}bp。若持有短久期（1年内）债券，需重点关注滚续能力与舆情演化。</div>`;
+    }
+    if (/同行|同业|相似|其他/.test(q)) {
+      const peers = ISSUERS.filter(i => i.industry===x.industry && i.id!==x.id).slice(0,4);
+      if (!peers.length) return `主体池中暂无与 ${x.name}（${x.industry}）同行业的其他主体。`;
+      return `${x.industry} 行业相似主体（按优先级排序）：<br/>` +
+             peers.map(p=>`<div class="mt-1">· <b>${p.name}</b>（${p.rating}，${p.tags.slice(0,2).join('、')}）→ ${p.priority==='high'?'重点跟踪':'一般跟踪'}</div>`).join('') +
+             `<div class="mt-2 text-[11px] text-[color:var(--muted)]">系统会自动匹配同行业、同区域、同财务结构的主体，用于识别评级下调的传导风险。</div>`;
+    }
+    if (/简评|摘要|总结|一段/.test(q)) {
+      return `<b>${x.name}（${x.rating}，展望${x.outlook}）</b>：${c.opinion} 核心风险为${x.tags.slice(0,2).join('与')}，短债占比 ${(x.shortDebtRatio*100).toFixed(0)}%，30日利差${x.spreadChange>=0?'走阔':'收窄'} ${Math.abs(x.spreadChange)}bp。建议${c.actions[0].label}。`;
+    }
+    if (/为什么|原因|如何/.test(q)) {
+      return `我按照证据链五步推理为您拆解 <b>${x.name}</b>：<br/>` +
+             x.reasoning.map((s,i)=>`<div class="mt-1"><span class="chip chip-blue">Step ${i+1}</span> ${s.step}：${s.content}</div>`).join('') +
+             `<div class="mt-2 text-[11px] text-[color:var(--muted)]">每一步均引用了原始证据，可在「证据链推理」页点击标签复核。</div>`;
+    }
+    return `已收到关于 <b>${x.name}</b> 的问题：「${q}」。<br/>结合当前证据链，我的初步判断是：${c.opinion} 更多细节可查看该主体的证据链五步推理与建议动作。`;
+  }
+
+  // ---------- 质检 / 复核 ----------
+  const SAMPLE_QA = `A集团（AA+，展望稳定）信用简评
+
+2025年上半年，A集团实现营业收入246亿元，同比下降18%；经营性现金流净额-35亿元，短期债务规模185亿元。公司作为区域房地产龙头，经营状况整体稳定，偿债能力较强，信用风险总体可控。
+
+综合来看，A集团财务表现稳健，融资渠道多元，未来仍能保持AA+评级。建议持有其发行的中票产品。`;
+
+  window.loadSampleQA = function() { document.getElementById('qaInput').value = SAMPLE_QA; toast('已加载示例报告'); };
+  window.runQualityCheck = function() {
+    const text = document.getElementById('qaInput').value.trim();
+    if (!text) { toast('请先输入或粘贴报告内容','warn'); return; }
+    const el = document.getElementById('qaResults');
+    el.innerHTML = '<div class="p-8 text-center text-[13px] text-[color:var(--muted)]"><span class="pulse">Agent 正在按 5 大维度校验证据一致性…</span></div>';
+    setTimeout(() => {
+      const findings = analyzeQA(text);
+      const score = Math.round(findings.filter(f=>f.level==='pass').length / findings.length * 100);
+      document.getElementById('qaScore').innerHTML = `<span class="chip ${score>=70?'chip-green':score>=40?'chip-amber':'chip-red'}">质检得分 ${score}/100</span>`;
+      el.innerHTML = findings.map(f=>`
+        <div class="quality-item ${f.level} fade-in">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="chip ${f.level==='pass'?'chip-green':f.level==='warn'?'chip-amber':'chip-red'}">${f.level==='pass'?'通过':f.level==='warn'?'建议':'不通过'}</span>
+              <span class="text-[13px] font-medium">${f.dim}</span>
+            </div>
+          </div>
+          <div class="text-[12px] mt-1.5 leading-relaxed">${f.detail}</div>
+          ${f.evidence?`<div class="mt-1.5 text-[11px] text-[color:var(--muted)]">📎 依据：${f.evidence}</div>`:''}
+        </div>
+      `).join('') + '<div class="mt-4 text-[11px] text-[color:var(--muted)] leading-snug">质检结论仅辅助研究员复核 AI 生成报告，不替代人工判断。所有质检基于主体池数据库中的多源证据交叉核对。</div>';
+      toast(`质检完成，得分 ${score}/100`);
+    }, 1000);
+  };
+  function analyzeQA(text) {
+    // 简单规则示例（针对示例报告构造有说服力的结果）
+    const results = [];
+    const hasA = /A集团/.test(text);
+    const revStable = /(稳健|稳定|良好)/.test(text);
+    const hasNegCash = /(-|负)\s*35|经营.*现金流.*-/.test(text);
+    const mentionShortDebt = /短.*债务|短债/.test(text);
+    const mentionRating = /(AA\+|AAA|AA)/.test(text);
+    const mentionOutlook = /展望.*稳定/.test(text);
+
+    // ① 数据一致性
+    if (hasA) {
+      results.push({dim:'① 数据一致性', level:'pass', detail:'报告中"246亿元营业收入、-35亿元经营现金流、185亿元短期债务"与主体池 A集团 2025H1 财务数据一致。', evidence:'主体池·A集团财务快照 2025H1'});
+    } else {
+      results.push({dim:'① 数据一致性', level:'warn', detail:'未能匹配到明确的主体名与关键财务数据，建议补充报告期与主体基本信息。'});
+    }
+    // ② 结论一致性
+    if (revStable && hasNegCash) {
+      results.push({dim:'② 结论一致性', level:'fail', detail:'报告结论声称"财务表现稳健"，但报告中同时提到经营性现金流由正转负至 -35亿元，且收入同比下降 18%，结论与证据存在明显冲突。', evidence:'原文"经营性现金流净额-35亿元" vs 原文"财务表现稳健"'});
+    } else {
+      results.push({dim:'② 结论一致性', level:'pass', detail:'结论与关键财务证据基本一致。'});
+    }
+    // ③ 风险遗漏
+    const misses = [];
+    if (!/股权.*冻结|股东.*风险|控股股东/.test(text)) misses.push('控股股东股份被司法冻结（治理风险）');
+    if (!/取消发行|发债.*取消|再融资/.test(text)) misses.push('拟发行中票取消发行（再融资弱化）');
+    if (!/评级.*展望.*负面|展望.*下调/.test(text)) misses.push('联合资信将评级展望由稳定下调至负面');
+    if (misses.length) {
+      results.push({dim:'③ 风险遗漏', level:'fail', detail:`未覆盖主体池中已识别的 ${misses.length} 项重大风险事件：<br/>· ${misses.join('<br/>· ')}`, evidence:'主体池·A集团 30 日异动事件'});
+    } else {
+      results.push({dim:'③ 风险遗漏', level:'pass', detail:'报告涵盖了主体池中已识别的主要风险事件。'});
+    }
+    // ④ 证据缺失
+    const hasEvidenceCitation = /(公告|评级|数据|新闻|财报|交易所).{0,10}(显示|披露|指出|公告)/.test(text);
+    if (!hasEvidenceCitation) {
+      results.push({dim:'④ 证据缺失', level:'warn', detail:'报告中关键判断（如"融资渠道多元"、"经营状况稳定"）未提供明确证据出处，建议补充数据/公告/评级引用。'});
+    } else {
+      results.push({dim:'④ 证据缺失', level:'pass', detail:'报告结论均引用了明确证据。'});
+    }
+    // ⑤ 维度完整性
+    const dims = { 行业:/行业|房地产/, 经营:/经营|收入|销售/, 财务:/财务|利润|资产/, 融资:/融资|授信|债券/, 支持:/股东|政府|外部支持/ };
+    const missDims = Object.keys(dims).filter(k => !dims[k].test(text));
+    if (missDims.length >= 2) {
+      results.push({dim:'⑤ 维度完整性', level:'warn', detail:`报告未充分覆盖信用分析框架中的以下维度：${missDims.join('、')}。建议补充相关分析。`});
+    } else {
+      results.push({dim:'⑤ 维度完整性', level:'pass', detail:'报告覆盖了行业、经营、财务、融资、支持等核心维度。'});
+    }
+    return results;
+  }
+
+  // ---------- 跟踪清单 ----------
+  window.addCurrentToWatchlist = function(customTitle) {
+    const x = currentIssuer();
+    const item = {
+      id: Date.now(),
+      subject: x.name,
+      question: customTitle || `跟踪 ${x.tags[0] || '基本面变化'} 的进一步演化`,
+      level: x.priority,
+      done: false,
+      createdAt: new Date().toLocaleString('zh-CN')
+    };
+    state.watchlist.unshift(item);
+    updateWatchlistBadge();
+    toast(`✓ 已加入跟踪清单：${x.name}`);
+  };
+  window.addToWatchlist = function() {
+    const subject = document.getElementById('wlSubject').value.trim();
+    const question = document.getElementById('wlQuestion').value.trim();
+    const level = document.getElementById('wlLevel').value;
+    if (!subject || !question) { toast('主体与问题都是必填','warn'); return; }
+    state.watchlist.unshift({id:Date.now(), subject, question, level, done:false, createdAt:new Date().toLocaleString('zh-CN')});
+    document.getElementById('wlSubject').value=''; document.getElementById('wlQuestion').value='';
+    updateWatchlistBadge(); renderWatchlist(); toast('已加入跟踪清单');
+  };
+  window.toggleWatch = function(id) {
+    const it = state.watchlist.find(w=>w.id===id); if (it) it.done = !it.done;
+    renderWatchlist();
+  };
+  window.removeWatch = function(id) {
+    state.watchlist = state.watchlist.filter(w=>w.id!==id);
+    updateWatchlistBadge(); renderWatchlist();
+  };
+  window.clearWatchlist = function() {
+    if (!state.watchlist.length) return;
+    if (confirm('确认清空跟踪清单？')) { state.watchlist = []; updateWatchlistBadge(); renderWatchlist(); toast('已清空'); }
+  };
+  function updateWatchlistBadge() {
+    const b = document.getElementById('wlBadge');
+    b.textContent = state.watchlist.length;
+    b.classList.toggle('chip-gray', state.watchlist.length===0);
+    b.classList.toggle('chip-red', state.watchlist.length>0);
+  }
+  function renderWatchlist() {
+    const el = document.getElementById('watchlist');
+    if (!el) return;
+    if (!state.watchlist.length) {
+      el.innerHTML = `<div class="p-8 text-center text-[13px] text-[color:var(--muted)]">
+        <div class="text-[40px] mb-2">📌</div>
+        <div>跟踪清单为空</div>
+        <div class="text-[11px] mt-2">可从主体池详情页或事件详情弹窗一键"加入跟踪"</div>
+      </div>`;
+    } else {
+      el.innerHTML = state.watchlist.map(w=>`
+        <div class="p-3 rounded-lg border border-[color:var(--line)] mb-2 fade-in ${w.done?'opacity-60':''}">
+          <div class="flex items-start gap-3">
+            <div class="checkbox ${w.done?'on':''}" onclick="toggleWatch(${w.id})"></div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                ${priorityBadge(w.level)}
+                <span class="text-[13px] font-medium">${w.subject}</span>
+                <span class="text-[11px] text-[color:var(--muted)]">${w.createdAt}</span>
+              </div>
+              <div class="text-[12px] mt-1 leading-relaxed ${w.done?'line-through':''}">${w.question}</div>
+            </div>
+            <button class="btn" onclick="removeWatch(${w.id})">删除</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    const stats = document.getElementById('wlStats');
+    if (stats) {
+      const total = state.watchlist.length;
+      const done = state.watchlist.filter(w=>w.done).length;
+      const high = state.watchlist.filter(w=>w.level==='high' && !w.done).length;
+      stats.innerHTML = `
+        <div>总条目：<b>${total}</b></div>
+        <div>已完成：<b>${done}</b></div>
+        <div>待处理：<b>${total-done}</b></div>
+        <div>其中高优先级：<b>${high}</b></div>
+      `;
+    }
+  }
+  window.exportWatchlist = function() {
+    if (!state.watchlist.length) { toast('清单为空','warn'); return; }
+    const text = '【CreditLens · 跟踪清单】\n生成时间：' + new Date().toLocaleString('zh-CN') + '\n\n' +
+      state.watchlist.map((w,i)=>`${i+1}. [${w.level==='high'?'高':w.level==='mid'?'中':'低'}] ${w.subject}\n   问题：${w.question}\n   状态：${w.done?'已完成':'待跟踪'}\n   创建：${w.createdAt}`).join('\n\n');
+    download('跟踪清单.txt', text);
+  };
+
+  // ---------- 导出研究简报 ----------
+  window.exportBrief = function() {
+    const x = currentIssuer();
+    const c = x.conclusion;
+    const text =
+`【信元 CreditLens · 信用研究简报】
+生成时间：${new Date().toLocaleString('zh-CN')}
+
+━━━━━━━━━━━━━━━━━━━━
+主体：${x.name}
+行业：${x.industry}   区域：${x.region}
+评级：${x.rating}   展望：${x.outlook}
+优先级：${({high:'高',mid:'中',low:'低'})[x.priority]}   综合评分：${x.priorityScore}
+信用利差：${x.spread}bp（30日${x.spreadChange>=0?'+':''}${x.spreadChange}bp）
+短债占比：${(x.shortDebtRatio*100).toFixed(0)}%   存量债券：${x.bondCount}只
+━━━━━━━━━━━━━━━━━━━━
+
+【AI 研究观点】
+${c.opinion}
+
+【支撑逻辑】
+${c.reasons.map((r,i)=>`${i+1}. ${r}`).join('\n')}
+
+【证据链推理】
+${x.reasoning.map((s,i)=>`Step ${i+1} · ${s.step}\n${s.content}\n引用证据：${s.evidence.join('；')}`).join('\n\n')}
+
+【近期异动事件】
+${x.events_detail.map(e=>`· [${e.date}] [${e.type}] ${e.title}（${e.source}）`).join('\n')}
+
+【建议动作】
+${c.actions.map(a=>`· [${a.level==='danger'?'高风险':a.level==='warn'?'关注':'跟踪'}] ${a.label}`).join('\n')}
+
+━━━━━━━━━━━━━━━━━━━━
+本简报由 信元 CreditLens 基于多源证据自动生成，所有主体名称、财务数据、事件均为虚构，仅用于产品演示，不构成投资建议。`;
+    download(`${x.name}-信用研究简报.txt`, text);
+    toast('研究简报已导出');
+  };
+
+  function download(name, text) {
+    const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = name; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url), 500);
+  }
+
+  // ---------- 定时模拟推送（每 45s 自动推送 1 条） ----------
+  setInterval(() => { if (Math.random() < 0.6) simulatePush(); }, 45000);
+
+  // ---------- 启动 ----------
+  renderIndustryFilters();
+  renderIssuerList();
+  renderDetail();
+  updateWatchlistBadge();
+})();
+
+</script>
+</body>
+</html>
