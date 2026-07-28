@@ -1625,12 +1625,39 @@ window.callBackend = async function(task, payload, timeoutMs) {
     state.chatHistory.push({role:'ai', content:'<span class="typing">🤖 DeepSeek 思考中…</span>', ts:Date.now()});
     renderChat();
     const subj = currentIssuer() || {};
-    const context = (subj.events_detail || []).slice(0, 6).map(e => ({
-      type: e.type || '事件', date: e.date || '', content: `${e.title}（来源：${e.source}）`
+    // 传丰富的主体画像给后端，让 DeepSeek 有料可推
+    const richSubject = {
+      name: subj.name,
+      industry: subj.industry,
+      rating: subj.rating,
+      outlook: subj.outlook,
+      region: subj.region,
+      priorityScore: subj.priorityScore,
+      shortDebtRatio: subj.shortDebtRatio,
+      bondCount: subj.bondCount,
+      spread: subj.spread,
+      spreadChange: subj.spreadChange,
+      tags: subj.tags,
+      finance: subj.finance,
+      radar: subj.radar,
+      conclusion: subj.conclusion ? {
+        opinion: subj.conclusion.opinion,
+        reasons: subj.conclusion.reasons,
+        actions: (subj.conclusion.actions || []).map(a => a.label)
+      } : null
+    };
+    // 事件明细全部传（一般 8-12 条，token 完全够）
+    const context = (subj.events_detail || []).slice(0, 12).map(e => ({
+      type: e.type || '事件',
+      date: e.date || '',
+      source: e.source || '',
+      weight: e.weight || 'mid',
+      title: e.title || '',
+      detail: e.detail || ''
     }));
     try {
       const data = await window.callBackend('chat', {
-        subject: { name: subj.name, industry: subj.industry, rating: subj.rating },
+        subject: richSubject,
         question: q,
         context
       });
