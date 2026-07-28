@@ -1510,11 +1510,14 @@ window.callBackend = async function(task, payload, timeoutMs) {
     toast('🤖 调用 DeepSeek 重新推理…');
     const el = document.getElementById('reasoning');
     el.innerHTML = '<div class="p-6 text-center text-[13px] text-[color:var(--muted)]"><span class="pulse">🤖 DeepSeek 正在整合最新证据链…（约 10-20 秒）</span></div>';
-    const subj = state.subjects.find(s => s.id === state.currentId) || {};
+    const subj = currentIssuer() || {};
+    const materials = (subj.events_detail || []).slice(0, 8).map(e => ({
+      type: e.type || '事件', date: e.date || '', content: `${e.title}（来源：${e.source}）`
+    }));
     try {
       const data = await window.callBackend('evidence_chain', {
         subject: { name: subj.name, industry: subj.industry, rating: subj.rating },
-        materials: (subj.materials || []).slice(0, 8)
+        materials
       });
       const steps = (data.result && data.result.steps) || [];
       if (steps.length) {
@@ -1540,11 +1543,14 @@ window.callBackend = async function(task, payload, timeoutMs) {
     toast('🤖 调用 DeepSeek 重新推理…');
     const el = document.getElementById('reasoningFull');
     el.innerHTML = '<div class="p-6 text-center text-[13px] text-[color:var(--muted)]"><span class="pulse">🤖 DeepSeek 正在整合最新证据链…（约 10-20 秒）</span></div>';
-    const subj = state.subjects.find(s => s.id === state.currentId) || {};
+    const subj = currentIssuer() || {};
+    const materials = (subj.events_detail || []).slice(0, 8).map(e => ({
+      type: e.type || '事件', date: e.date || '', content: `${e.title}（来源：${e.source}）`
+    }));
     try {
       const data = await window.callBackend('evidence_chain', {
         subject: { name: subj.name, industry: subj.industry, rating: subj.rating },
-        materials: (subj.materials || []).slice(0, 8)
+        materials
       });
       const steps = (data.result && data.result.steps) || [];
       if (steps.length) {
@@ -1618,12 +1624,15 @@ window.callBackend = async function(task, payload, timeoutMs) {
     appendChat('user', q); inp.value = '';
     state.chatHistory.push({role:'ai', content:'<span class="typing">🤖 DeepSeek 思考中…</span>', ts:Date.now()});
     renderChat();
-    const subj = state.subjects.find(s => s.id === state.currentId) || {};
+    const subj = currentIssuer() || {};
+    const context = (subj.events_detail || []).slice(0, 6).map(e => ({
+      type: e.type || '事件', date: e.date || '', content: `${e.title}（来源：${e.source}）`
+    }));
     try {
       const data = await window.callBackend('chat', {
         subject: { name: subj.name, industry: subj.industry, rating: subj.rating },
         question: q,
-        context: (subj.materials || []).slice(0, 6)
+        context
       });
       state.chatHistory.pop();
       const tokens = (data.usage && data.usage.total_tokens) || '-';
