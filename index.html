@@ -7,32 +7,61 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  :root { --brand:#0F6E56; --brand-2:#185FA5; --danger:#A32D2D; --warn:#BA7517; --ink:#2C2C2A; --muted:#5F5E5A; --line:#E5E3DA; --bg:#FAF8F2; }
-  html,body { background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
-  .card { background:#fff; border:1px solid var(--line); border-radius:12px; }
-  .chip { display:inline-flex; align-items:center; padding:2px 8px; border-radius:6px; font-size:11px; line-height:18px; border:1px solid var(--line); background:#F5F3EA; color:#5F5E5A; }
-  .chip-red { background:#FCEBEB; color:#A32D2D; border-color:#F7C1C1; }
-  .chip-amber { background:#FAEEDA; color:#854F0B; border-color:#FAC775; }
-  .chip-blue { background:#E6F1FB; color:#0C447C; border-color:#B5D4F4; }
-  .chip-green { background:#E1F5EE; color:#085041; border-color:#9FE1CB; }
+  :root {
+    --brand:#0F6E56; --brand-2:#185FA5; --danger:#A32D2D; --warn:#BA7517;
+    --ink:#1E1E1C; --ink-2:#3F3E3B; --muted:#6E6C67; --muted-2:#9A9791;
+    --line:#EAE7DC; --line-2:#F2EFE6; --bg:#FBF9F3;
+    --fs-hero:20px; --fs-h1:17px; --fs-h2:15px; --fs-h3:14px;
+    --fs-body:14px; --fs-body-sm:13px; --fs-meta:12px; --fs-micro:11px;
+    --radius:14px; --radius-sm:10px;
+  }
+  html,body {
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-size:var(--fs-body); line-height:1.6;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  }
+  .card {
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:0 1px 2px rgba(28,28,26,0.02);
+  }
+  .card-hover:hover { box-shadow:0 4px 16px rgba(28,28,26,0.06); border-color:#D9D6C9; }
+  .chip {
+    display:inline-flex; align-items:center; padding:3px 10px; border-radius:999px;
+    font-size:var(--fs-micro); line-height:18px; border:1px solid var(--line);
+    background:#F7F5EC; color:var(--muted); font-weight:500;
+  }
+  .chip-red { background:#FDEEEE; color:#A32D2D; border-color:#F5CACA; }
+  .chip-amber { background:#FBF0D9; color:#854F0B; border-color:#F2C670; }
+  .chip-blue { background:#E9F2FB; color:#0C447C; border-color:#BED8F4; }
+  .chip-green { background:#E4F5EE; color:#085041; border-color:#A6DEC8; }
   .chip-gray { background:#F1EFE8; color:#444441; }
-  .prio-high { background:#FCEBEB; color:#791F1F; }
-  .prio-mid  { background:#FAEEDA; color:#854F0B; }
-  .prio-low  { background:#E1F5EE; color:#0F6E56; }
-  .btn { padding:6px 12px; border:1px solid var(--line); border-radius:8px; background:#fff; font-size:12px; color:#444441; cursor:pointer; transition:all .15s; }
-  .btn:hover { border-color:#B4B2A9; background:#F5F3EA; }
+  .prio-high { background:#FDEEEE; color:#791F1F; }
+  .prio-mid  { background:#FBF0D9; color:#854F0B; }
+  .prio-low  { background:#E4F5EE; color:#0F6E56; }
+  .btn {
+    padding:7px 14px; border:1px solid var(--line); border-radius:8px; background:#fff;
+    font-size:var(--fs-meta); color:var(--ink-2); cursor:pointer;
+    transition:all .18s ease; font-weight:500;
+  }
+  .btn:hover { border-color:#C4C1B4; background:#FAF8F0; color:var(--ink); }
   .btn-active { background:#0F6E56; color:#fff; border-color:#0F6E56; }
-  .btn-active:hover { background:#0F6E56; color:#fff; }
-  .btn-primary { background:#0F6E56; color:#fff; border-color:#0F6E56; }
-  .btn-primary:hover { background:#0d5f4a; border-color:#0d5f4a; color:#fff;}
-  .issuer-row { cursor:pointer; transition:background .12s; }
-  .issuer-row:hover { background:#F5F3EA; }
-  .issuer-row.on { background:#E6F1FB; border-left:3px solid #185FA5; }
-  .step-dot { width:8px; height:8px; border-radius:50%; background:#0F6E56; margin-top:6px;}
-  .step-line { width:1px; background:#D3D1C7; }
-  .evi-badge { display:inline-flex; align-items:center; font-size:11px; padding:2px 6px; border-radius:4px; background:#F1EFE8; color:#5F5E5A; margin-right:6px; margin-bottom:4px; cursor:pointer; }
-  .evi-badge:hover { background:#E5E3DA; color:#2C2C2A;}
-  .kbd { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; padding:1px 5px; border:1px solid var(--line); border-radius:4px; color:#5F5E5A; background:#FAF8F2; }
+  .btn-active:hover { background:#0d5f4a; color:#fff; border-color:#0d5f4a; }
+  .btn-primary { background:#0F6E56; color:#fff; border-color:#0F6E56; box-shadow:0 1px 3px rgba(15,110,86,0.15); }
+  .btn-primary:hover { background:#0d5f4a; border-color:#0d5f4a; color:#fff; box-shadow:0 2px 6px rgba(15,110,86,0.25); }
+  .btn-sm { padding:5px 10px; font-size:var(--fs-micro); }
+  .issuer-row { cursor:pointer; transition:background .12s; padding:12px 14px !important; }
+  .issuer-row:hover { background:#F7F5EC; }
+  .issuer-row.on { background:#E9F2FB; border-left:3px solid #185FA5; }
+  .step-dot { width:10px; height:10px; border-radius:50%; background:#0F6E56; margin-top:6px; box-shadow:0 0 0 3px rgba(15,110,86,0.12);}
+  .step-line { width:1px; background:#D9D6C9; }
+  .evi-badge {
+    display:inline-flex; align-items:center; font-size:var(--fs-micro);
+    padding:3px 8px; border-radius:4px; background:#F2EFE6; color:var(--muted);
+    margin-right:6px; margin-bottom:4px; cursor:pointer; transition:all .15s;
+  }
+  .evi-badge:hover { background:#E5E1D5; color:var(--ink); }
+  .kbd { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:var(--fs-micro); padding:1px 6px; border:1px solid var(--line); border-radius:4px; color:var(--muted); background:var(--bg); }
   .fade-in { animation: fade .35s ease both; }
   @keyframes fade { from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
   .slide-in { animation: slideIn .3s ease both; }
@@ -41,8 +70,8 @@
   @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.5;} }
   .scroll-thin::-webkit-scrollbar { width:6px; height:6px;}
   .scroll-thin::-webkit-scrollbar-thumb { background:#D3D1C7; border-radius:3px; }
-  .tab-item { padding:10px 0; cursor:pointer; color:#5F5E5A; border-bottom:2px solid transparent; transition:all .15s; }
-  .tab-item:hover { color:#2C2C2A; }
+  .tab-item { padding:14px 0; cursor:pointer; color:var(--muted); border-bottom:2px solid transparent; transition:all .18s; font-size:var(--fs-body-sm); font-weight:500; }
+  .tab-item:hover { color:var(--ink); }
   .tab-active { color:#0F6E56 !important; border-bottom:2px solid #0F6E56 !important; }
   .action-danger { background:#FCEBEB; color:#791F1F; border:1px solid #F7C1C1; }
   .action-warn { background:#FAEEDA; color:#854F0B; border:1px solid #FAC775; }
@@ -58,39 +87,39 @@
   .typing::after { content:'▍'; animation:blink 1s step-end infinite; margin-left:2px;}
   @keyframes blink { 50%{opacity:0;} }
   /* ---- AI 回复 Markdown 排版 ---- */
-  .md-body { font-size:13px; line-height:1.75; color:#2C2C2A; }
-  .md-body h1, .md-body h2, .md-body h3 { color:#0F1E3D; font-weight:600; margin:14px 0 8px; letter-spacing:.2px; }
-  .md-body h1 { font-size:15px; padding-bottom:6px; border-bottom:1px solid #E5E1D5; }
-  .md-body h2 { font-size:14px; padding-left:8px; border-left:3px solid #C9A24B; }
-  .md-body h3 { font-size:13px; color:#0F6E56; }
-  .md-body p { margin:6px 0; }
+  .md-body { font-size:var(--fs-body); line-height:1.78; color:var(--ink); }
+  .md-body h1, .md-body h2, .md-body h3 { color:#0F1E3D; font-weight:600; margin:16px 0 10px; letter-spacing:.2px; }
+  .md-body h1 { font-size:16px; padding-bottom:6px; border-bottom:1px solid #E5E1D5; }
+  .md-body h2 { font-size:15px; padding-left:10px; border-left:3px solid #C9A24B; }
+  .md-body h3 { font-size:14px; color:#0F6E56; }
+  .md-body p { margin:8px 0; }
   .md-body strong { color:#0F1E3D; font-weight:600; }
   .md-body em { color:#0F6E56; font-style:normal; background:rgba(15,110,86,.06); padding:0 3px; border-radius:2px; }
-  .md-body ul, .md-body ol { margin:6px 0 8px 4px; padding-left:18px; }
-  .md-body li { margin:3px 0; line-height:1.7; }
+  .md-body ul, .md-body ol { margin:8px 0 10px 4px; padding-left:20px; }
+  .md-body li { margin:4px 0; line-height:1.75; }
   .md-body ul li::marker { color:#C9A24B; }
   .md-body ol li::marker { color:#0F1E3D; font-weight:600; }
-  .md-body code { background:#EDE9DA; color:#7A5F1A; padding:1px 5px; border-radius:3px; font-family:'SF Mono',Consolas,monospace; font-size:12px; }
-  .md-body blockquote { margin:6px 0; padding:6px 10px; border-left:3px solid #C9A24B; background:rgba(201,162,75,.08); color:#5A4A2A; border-radius:0 4px 4px 0; }
-  .md-body .cite-tag { display:inline-block; padding:1px 6px; margin:0 2px; background:#0F1E3D; color:#C9A24B; border-radius:10px; font-size:11px; font-weight:500; letter-spacing:.3px; }
-  .md-body hr { border:none; border-top:1px dashed #D6D2C6; margin:10px 0; }
+  .md-body code { background:#EDE9DA; color:#7A5F1A; padding:1px 6px; border-radius:3px; font-family:'SF Mono',Consolas,monospace; font-size:var(--fs-body-sm); }
+  .md-body blockquote { margin:8px 0; padding:8px 12px; border-left:3px solid #C9A24B; background:rgba(201,162,75,.08); color:#5A4A2A; border-radius:0 4px 4px 0; }
+  .md-body .cite-tag { display:inline-block; padding:2px 7px; margin:0 2px; background:#0F1E3D; color:#C9A24B; border-radius:10px; font-size:var(--fs-micro); font-weight:500; letter-spacing:.3px; }
+  .md-body hr { border:none; border-top:1px dashed #D6D2C6; margin:12px 0; }
   /* ---- AI 思考过程卡片 ---- */
-  .cot-card { margin:6px 0 10px; border:1px solid #DDD9CB; border-radius:10px; background:linear-gradient(180deg,#FBFAF4 0%,#F5F3EA 100%); overflow:hidden; }
-  .cot-head { display:flex; align-items:center; gap:6px; padding:8px 12px; cursor:pointer; user-select:none; font-size:12px; color:#0F1E3D; font-weight:500; }
+  .cot-card { margin:8px 0 12px; border:1px solid #DDD9CB; border-radius:12px; background:linear-gradient(180deg,#FBFAF4 0%,#F5F3EA 100%); overflow:hidden; }
+  .cot-head { display:flex; align-items:center; gap:8px; padding:10px 14px; cursor:pointer; user-select:none; font-size:var(--fs-body-sm); color:#0F1E3D; font-weight:500; }
   .cot-head:hover { background:rgba(15,30,61,.04); }
-  .cot-arrow { display:inline-block; transition:transform .25s; color:#0F6E56; font-size:10px; }
+  .cot-arrow { display:inline-block; transition:transform .25s; color:#0F6E56; font-size:11px; }
   .cot-card.collapsed .cot-arrow { transform:rotate(-90deg); }
   .cot-card.collapsed .cot-body { display:none; }
-  .cot-badge { display:inline-flex; align-items:center; gap:4px; padding:1px 8px; background:#0F6E56; color:#fff; border-radius:10px; font-size:10px; font-weight:500; }
-  .cot-body { padding:6px 14px 12px 14px; border-top:1px dashed #E5E1D5; }
-  .cot-step { display:flex; gap:10px; padding:6px 0; align-items:flex-start; opacity:0; animation:cotIn .4s forwards; }
+  .cot-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 10px; background:#0F6E56; color:#fff; border-radius:10px; font-size:var(--fs-micro); font-weight:500; }
+  .cot-body { padding:8px 16px 14px 16px; border-top:1px dashed #E5E1D5; }
+  .cot-step { display:flex; gap:12px; padding:7px 0; align-items:flex-start; opacity:0; animation:cotIn .4s forwards; }
   .cot-step:nth-child(1){ animation-delay:.05s; } .cot-step:nth-child(2){ animation-delay:.25s; }
   .cot-step:nth-child(3){ animation-delay:.45s; } .cot-step:nth-child(4){ animation-delay:.65s; }
   .cot-step:nth-child(5){ animation-delay:.85s; }
   @keyframes cotIn { from{opacity:0; transform:translateX(-6px);} to{opacity:1; transform:none;} }
-  .cot-num { flex-shrink:0; width:20px; height:20px; border-radius:50%; background:#0F1E3D; color:#C9A24B; font-size:11px; font-weight:600; display:flex; align-items:center; justify-content:center; margin-top:1px; }
-  .cot-text { font-size:12px; line-height:1.65; color:#5A5852; }
-  .ai-meta { display:flex; align-items:center; gap:8px; margin-top:8px; padding-top:8px; border-top:1px dashed #E5E1D5; font-size:11px; color:#8C8A82; }
+  .cot-num { flex-shrink:0; width:22px; height:22px; border-radius:50%; background:#0F1E3D; color:#C9A24B; font-size:var(--fs-meta); font-weight:600; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .cot-text { font-size:var(--fs-body-sm); line-height:1.7; color:#4A4842; }
+  .ai-meta { display:flex; align-items:center; gap:10px; margin-top:10px; padding-top:10px; border-top:1px dashed #E5E1D5; font-size:var(--fs-micro); color:#8C8A82; }
   .ai-meta .dot { width:6px; height:6px; border-radius:50%; background:#0F6E56; }
   .page { display:none !important; }
   .page.on { display:block !important; }
@@ -109,99 +138,263 @@
   .quality-item.pass { border-left:3px solid #0F6E56;}
   .quality-item.warn { border-left:3px solid #BA7517;}
   .quality-item.fail { border-left:3px solid #A32D2D;}
+
+  /* ============ 动效与质感增强 ============ */
+  /* 顶部滚动进度条 */
+  #scrollProgress {
+    position:fixed; top:0; left:0; height:2px; width:0%;
+    background:linear-gradient(90deg,#0F6E56,#C9A24B); z-index:60;
+    transition:width .1s linear; box-shadow:0 0 8px rgba(15,110,86,.4);
+  }
+  /* 顶栏滚动态 */
+  header { transition:box-shadow .25s ease, backdrop-filter .25s; }
+  header.scrolled { box-shadow:0 2px 16px rgba(28,28,26,.07); background:rgba(255,255,255,.88); backdrop-filter:saturate(180%) blur(12px); }
+
+  /* 页面切换入场 */
+  .page.on { animation:pageIn .38s cubic-bezier(.22,.8,.3,1) both; }
+  @keyframes pageIn { from{opacity:0; transform:translateY(10px) scale(.995);} to{opacity:1; transform:none;} }
+
+  /* 卡片依次入场（stagger） */
+  .stagger > * { animation:cardIn .45s cubic-bezier(.22,.8,.3,1) both; }
+  .stagger > *:nth-child(1){animation-delay:.02s} .stagger > *:nth-child(2){animation-delay:.09s}
+  .stagger > *:nth-child(3){animation-delay:.16s} .stagger > *:nth-child(4){animation-delay:.23s}
+  .stagger > *:nth-child(5){animation-delay:.3s}
+  @keyframes cardIn { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
+
+  /* 卡片质感升级：顶部渐变高光 + hover 抬升 */
+  .card { position:relative; transition:box-shadow .22s ease, transform .22s ease, border-color .22s; }
+  .card-hover:hover { box-shadow:0 8px 28px rgba(28,28,26,.09); border-color:#D4D0C0; transform:translateY(-2px); }
+  /* 重点卡片：左上角品牌色 accent */
+  .card-accent::before {
+    content:''; position:absolute; top:-1px; left:-1px; right:-1px; height:3px;
+    background:linear-gradient(90deg,#0F6E56 0%,#0F6E56 38%,#C9A24B 100%);
+    border-radius:var(--radius) var(--radius) 0 0;
+  }
+  .card-accent-red::before { background:linear-gradient(90deg,#A32D2D 0%,#A32D2D 40%,#BA7517 100%); }
+  .card-accent-blue::before { background:linear-gradient(90deg,#185FA5 0%,#185FA5 40%,#0F6E56 100%); }
+
+  /* 按钮点击涟漪反馈 */
+  .btn { position:relative; overflow:hidden; }
+  .btn:active { transform:scale(.97); }
+  .btn::after {
+    content:''; position:absolute; inset:0; background:radial-gradient(circle,rgba(255,255,255,.6) 0%,transparent 60%);
+    opacity:0; transition:opacity .35s;
+  }
+  .btn:active::after { opacity:1; transition:none; }
+
+  /* 优先级统计块：渐变 + hover 抬升 */
+  .stat-tile {
+    position:relative; overflow:hidden; cursor:pointer;
+    transition:transform .2s cubic-bezier(.22,.8,.3,1), box-shadow .2s;
+  }
+  .stat-tile:hover { transform:translateY(-3px); box-shadow:0 6px 18px rgba(28,28,26,.1); }
+  .stat-tile::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,.5) 0%,transparent 55%);
+    pointer-events:none;
+  }
+  .stat-tile.sel { box-shadow:0 0 0 2px currentColor inset; }
+
+  /* 主体行：左侧优先级色条 + 平滑推入 */
+  .issuer-row { position:relative; border-left:3px solid transparent; }
+  .issuer-row::before {
+    content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:transparent; transition:background .2s;
+  }
+  .issuer-row[data-prio="high"]::before { background:#E8B4B4; }
+  .issuer-row[data-prio="mid"]::before  { background:#EBCE94; }
+  .issuer-row[data-prio="low"]::before  { background:#A6DEC8; }
+  .issuer-row:hover { background:#F7F5EC; transform:translateX(2px); }
+  .issuer-row.on::before { background:#185FA5; width:4px; }
+
+  /* 利差变动 pill：替代原 sparkline */
+  .spread-pill {
+    display:inline-flex; align-items:center; gap:4px;
+    padding:2px 8px; border-radius:999px;
+    font-size:11px; font-weight:600; letter-spacing:.02em;
+    line-height:1.4; white-space:nowrap;
+    border:1px solid transparent;
+  }
+  .spread-pill.up   { color:#A32D2D; background:#FBEFEA; border-color:#F1D9CE; }
+  .spread-pill.down { color:#0F6E56; background:#E9F5EF; border-color:#CFE7DC; }
+  .spread-pill.flat { color:#6B675C; background:#F1EEE3; border-color:#E6E1D2; }
+  .spread-pill .arr { font-size:10px; }
+
+  /* 事件卡：左侧严重度色条 */
+  .evt-card { position:relative; border-left:3px solid #D9D6C9; transition:all .2s cubic-bezier(.22,.8,.3,1); }
+  .evt-card:hover { transform:translateX(3px); box-shadow:0 3px 12px rgba(28,28,26,.07); }
+  .evt-card.sev-high { border-left-color:#A32D2D; }
+  .evt-card.sev-mid  { border-left-color:#BA7517; }
+  .evt-card.sev-low  { border-left-color:#0F6E56; }
+
+  /* 数字滚动强调 */
+  .num-anim { font-variant-numeric:tabular-nums; }
+  .num-flash { animation:numFlash .6s ease; }
+  @keyframes numFlash { 0%{color:#C9A24B; transform:scale(1.08);} 100%{color:inherit; transform:none;} }
+
+  /* 骨架屏 */
+  .skel { background:linear-gradient(90deg,#F0EDE2 25%,#F8F6EF 50%,#F0EDE2 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:6px; }
+  @keyframes shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+  .skel-line { height:11px; margin-bottom:9px; }
+  .skel-line.w40{width:40%} .skel-line.w60{width:60%} .skel-line.w80{width:80%} .skel-line.w100{width:100%}
+
+  /* AI 推理中：进度环 + 步骤指示 */
+  .ai-loading { display:flex; flex-direction:column; align-items:center; gap:14px; padding:34px 20px; }
+  .ai-ring { width:44px; height:44px; border:3px solid #E5E1D5; border-top-color:#0F6E56; border-radius:50%; animation:spin .85s linear infinite; }
+  @keyframes spin { to{transform:rotate(360deg);} }
+  .ai-steps { display:flex; gap:6px; align-items:center; }
+  .ai-steps i { width:6px; height:6px; border-radius:50%; background:#D9D6C9; animation:stepGlow 1.5s infinite; }
+  .ai-steps i:nth-child(2){animation-delay:.2s} .ai-steps i:nth-child(3){animation-delay:.4s}
+  .ai-steps i:nth-child(4){animation-delay:.6s} .ai-steps i:nth-child(5){animation-delay:.8s}
+  @keyframes stepGlow { 0%,100%{background:#D9D6C9; transform:scale(1);} 50%{background:#0F6E56; transform:scale(1.4);} }
+  .ai-progress { width:200px; height:3px; background:#EAE7DC; border-radius:2px; overflow:hidden; }
+  .ai-progress i { display:block; height:100%; width:30%; background:linear-gradient(90deg,#0F6E56,#C9A24B); border-radius:2px; animation:progSlide 1.6s ease-in-out infinite; }
+  @keyframes progSlide { 0%{transform:translateX(-100%);} 100%{transform:translateX(340%);} }
+
+  /* tab 下划线滑动 */
+  nav { position:relative; }
+  #tabIndicator {
+    position:absolute; bottom:0; height:2px; background:#0F6E56; border-radius:1px;
+    transition:left .3s cubic-bezier(.22,.8,.3,1), width .3s cubic-bezier(.22,.8,.3,1);
+  }
+  .tab-active { border-bottom-color:transparent !important; }
+
+  /* 五步推理：连接线生长动画 */
+  .step-line { position:relative; overflow:hidden; }
+  .step-line::after {
+    content:''; position:absolute; inset:0; background:#0F6E56;
+    transform:scaleY(0); transform-origin:top;
+    animation:lineGrow .5s ease forwards; animation-delay:var(--d,0s);
+  }
+  .step-dot { animation:dotPop .4s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes dotPop { from{transform:scale(0); opacity:0;} to{transform:scale(1); opacity:1;} }
+  @keyframes lineGrow { to{transform:scaleY(1);} }
+
+  /* 证据 badge hover 提升 */
+  .evi-badge:hover { background:#0F1E3D; color:#C9A24B; transform:translateY(-1px); box-shadow:0 2px 6px rgba(15,30,61,.18); }
+
+  /* 空状态：更有设计感 */
+  .empty-state { padding:46px 24px; text-align:center; }
+  .empty-state .icon {
+    width:64px; height:64px; margin:0 auto 14px; border-radius:18px;
+    display:flex; align-items:center; justify-content:center; font-size:28px;
+    background:linear-gradient(135deg,#F5F3EA,#EAE7DC); border:1px solid var(--line);
+    animation:floaty 3.5s ease-in-out infinite;
+  }
+  @keyframes floaty { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
+
+  /* 结论卡片：金色引用条 */
+  .conc-opinion { padding-left:12px; border-left:3px solid #C9A24B; }
+
+  /* 趋势箭头 */
+  .trend-arrow { display:inline-block; font-size:11px; margin-left:2px; }
+
+  /* 减少动效偏好 */
+  @media (prefers-reduced-motion:reduce) {
+    *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
+  }
 </style>
 </head>
 <body>
+<div id="scrollProgress"></div>
 <div class="min-h-screen">
   <!-- Top bar -->
   <header class="border-b border-[color:var(--line)] bg-white sticky top-0 z-30">
-    <div class="max-w-[1440px] mx-auto px-6 py-3 flex items-center gap-4">
-      <div class="flex items-center gap-2 cursor-pointer" onclick="switchPage('dashboard')">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:#0F6E56;color:#fff;font-weight:500">信</div>
+    <div class="max-w-[1440px] mx-auto px-8 py-4 flex items-center gap-5">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchPage('dashboard')">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-[15px]" style="background:linear-gradient(135deg,#0F6E56,#0d5f4a);color:#fff;font-weight:600;box-shadow:0 2px 6px rgba(15,110,86,0.25)">信</div>
         <div>
-          <div class="text-[15px] font-medium leading-none">信元 CreditLens</div>
-          <div class="text-[11px] text-[color:var(--muted)] mt-1">发债主体基本面异动洞察 Agent</div>
+          <div class="text-[17px] font-semibold leading-tight tracking-tight">信元 CreditLens</div>
+          <div class="text-[12px] text-[color:var(--muted)] mt-0.5">发债主体基本面异动洞察 Agent</div>
         </div>
       </div>
-      <div class="ml-6 hidden md:flex items-center gap-4 text-[12px] text-[color:var(--muted)]">
-        <span class="chip chip-green flex items-center gap-1"><span class="live-dot"></span>实时监测中</span>
-        <span>数据更新：<span id="updated">2026-07-01 15:00</span></span>
-        <span>主体池：<span id="tot">10</span> 家 · 今日异动 <span id="et">24</span> 条</span>
+      <div class="ml-8 hidden md:flex items-center gap-5 text-[13px] text-[color:var(--muted)]">
+        <span class="chip chip-green flex items-center gap-1.5"><span class="live-dot"></span>实时监测中</span>
+        <span>数据更新 <span class="text-[color:var(--ink-2)] font-medium" id="updated">2026-07-01 15:00</span></span>
+        <span>主体池 <span class="text-[color:var(--ink-2)] font-medium" id="tot">10</span> 家 · 今日异动 <span class="text-[color:var(--ink-2)] font-medium" id="et">24</span> 条</span>
       </div>
       <div class="ml-auto flex items-center gap-2">
         <div class="relative">
-          <input id="searchInput" class="pl-8 pr-3 py-1.5 text-[12px] rounded-lg border border-[color:var(--line)] w-[240px]" placeholder="搜索主体 / 事件 / 标签…" />
-          <svg class="w-4 h-4 absolute left-2.5 top-2 text-[color:var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input id="searchInput" class="pl-9 pr-9 py-2 text-[13px] rounded-lg border border-[color:var(--line)] w-[260px] transition-all" placeholder="搜索主体 / 事件 / 标签…" />
+          <svg class="w-4 h-4 absolute left-3 top-2.5 text-[color:var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <span class="kbd absolute right-2.5 top-2" style="line-height:18px">/</span>
           <div id="searchDropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[color:var(--line)] rounded-lg shadow-lg z-40 max-h-[280px] overflow-auto"></div>
         </div>
         <button class="btn" onclick="simulatePush()" title="模拟新风险事件推送">📡 模拟推送</button>
-        <button class="btn" onclick="openDrawer()">🔔 <span id="notifCount">3</span></button>
+        <button class="btn relative" onclick="openDrawer()">🔔 <span id="notifCount">3</span></button>
         <button class="btn btn-primary" onclick="exportBrief()">导出研究简报</button>
       </div>
     </div>
-    <nav class="max-w-[1440px] mx-auto px-6 flex gap-6 text-[13px]">
+    <nav class="max-w-[1440px] mx-auto px-8 flex gap-7">
       <a class="tab-item tab-active" data-page="dashboard" onclick="switchPage('dashboard')">主体池看板</a>
       <a class="tab-item" data-page="reasoning" onclick="switchPage('reasoning')">证据链推理</a>
       <a class="tab-item" data-page="assistant" onclick="switchPage('assistant')">AI 研究助手</a>
       <a class="tab-item" data-page="quality" onclick="switchPage('quality')">质检 / 复核</a>
       <a class="tab-item" data-page="watchlist" onclick="switchPage('watchlist')">跟踪清单 <span id="wlBadge" class="chip chip-red ml-1">0</span></a>
+      <div id="tabIndicator"></div>
     </nav>
   </header>
 
   <!-- ============ 页面1：主体池看板（默认） ============ -->
-  <main id="page-dashboard" class="page on max-w-[1440px] mx-auto px-6 py-5 grid grid-cols-12 gap-5">
+  <main id="page-dashboard" class="page on max-w-[1440px] mx-auto px-8 py-6 grid grid-cols-12 gap-6">
     <!-- Left -->
-    <section class="col-span-4 space-y-3">
-      <div class="card p-4">
-        <div class="flex items-center justify-between mb-3">
-          <div class="text-[14px] font-medium">主体池筛查</div>
-          <div class="text-[11px] text-[color:var(--muted)]">按 AI 综合优先级排序</div>
+    <section class="col-span-4 space-y-4 stagger">
+      <div class="card card-accent p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-[15px] font-semibold">主体池筛查</div>
+          <div class="text-[12px] text-[color:var(--muted)] flex items-center gap-1.5"><span class="live-dot" style="width:6px;height:6px"></span>AI 优先级实时排序</div>
         </div>
-        <div class="grid grid-cols-3 gap-2 mb-3">
-          <div class="rounded-lg p-2 text-center cursor-pointer hover:opacity-80" style="background:#FCEBEB" onclick="applyFilter('high')">
-            <div class="text-[11px] text-[color:var(--muted)]">高优先级</div>
-            <div class="text-[18px] font-medium" style="color:#791F1F" id="c-high">3</div>
+        <div class="grid grid-cols-3 gap-2.5 mb-4">
+          <div class="stat-tile rounded-xl p-3.5 text-center" style="background:linear-gradient(160deg,#FEF4F4,#FBE4E4);color:#791F1F" onclick="applyFilter('high')" data-tile="high">
+            <div class="text-[11px] font-medium" style="color:#9B5555">高优先级</div>
+            <div class="text-[24px] font-semibold mt-0.5 num-anim" style="color:#791F1F" id="c-high">3</div>
+            <div class="text-[10px] mt-0.5" style="color:#A87070">需重点跟踪</div>
           </div>
-          <div class="rounded-lg p-2 text-center cursor-pointer hover:opacity-80" style="background:#FAEEDA" onclick="applyFilter('mid')">
-            <div class="text-[11px] text-[color:var(--muted)]">中优先级</div>
-            <div class="text-[18px] font-medium" style="color:#854F0B" id="c-mid">4</div>
+          <div class="stat-tile rounded-xl p-3.5 text-center" style="background:linear-gradient(160deg,#FEF8EB,#FBEFD3);color:#854F0B" onclick="applyFilter('mid')" data-tile="mid">
+            <div class="text-[11px] font-medium" style="color:#96702F">中优先级</div>
+            <div class="text-[24px] font-semibold mt-0.5 num-anim" style="color:#854F0B" id="c-mid">4</div>
+            <div class="text-[10px] mt-0.5" style="color:#A98A50">常规观察</div>
           </div>
-          <div class="rounded-lg p-2 text-center cursor-pointer hover:opacity-80" style="background:#E1F5EE" onclick="applyFilter('low')">
-            <div class="text-[11px] text-[color:var(--muted)]">低优先级</div>
-            <div class="text-[18px] font-medium" style="color:#0F6E56" id="c-low">3</div>
+          <div class="stat-tile rounded-xl p-3.5 text-center" style="background:linear-gradient(160deg,#EFFAF5,#DFF3EA);color:#0F6E56" onclick="applyFilter('low')" data-tile="low">
+            <div class="text-[11px] font-medium" style="color:#3D7D6C">低优先级</div>
+            <div class="text-[24px] font-semibold mt-0.5 num-anim" style="color:#0F6E56" id="c-low">3</div>
+            <div class="text-[10px] mt-0.5" style="color:#5F9385">资质稳健</div>
           </div>
         </div>
-        <div class="flex flex-wrap gap-1 mb-2" id="filters">
+        <div class="flex flex-wrap gap-1.5 mb-2" id="filters">
           <button class="btn btn-active" data-f="all">全部</button>
           <button class="btn" data-f="high">高优先级</button>
           <button class="btn" data-f="mid">中优先级</button>
           <button class="btn" data-f="low">低优先级</button>
         </div>
-        <div class="flex flex-wrap gap-1 mb-2" id="indFilters"></div>
+        <div class="flex flex-wrap gap-1.5 mb-3" id="indFilters"></div>
         <div class="max-h-[520px] overflow-auto scroll-thin -mx-2" id="issuerList"></div>
       </div>
 
-      <div class="card p-4">
-        <div class="flex items-center justify-between mb-2">
-          <div class="text-[13px] font-medium">今日 AI 推荐关注</div>
-          <span class="chip chip-blue">Agent 自动生成</span>
+      <div class="card card-hover p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-[14px] font-semibold">今日 AI 推荐关注</div>
+          <span class="chip chip-blue flex items-center gap-1"><span class="live-dot" style="width:5px;height:5px;background:#0C447C"></span>Agent 自动生成</span>
         </div>
-        <ul class="text-[12px] text-[color:var(--muted)] space-y-1.5 leading-snug">
-          <li>· A集团、H钢铁 触发多因子共振，建议 <span class="chip chip-red">重点观察</span></li>
-          <li>· B城投 短债占比升至 48%，建议跟踪政府端支持</li>
-          <li>· F汽车零部件 客户集中度上升，建议下沉至大客户信用</li>
-          <li>· E消费、I基建 保持稳定，可作为组合底仓</li>
+        <ul class="text-[13px] text-[color:var(--ink-2)] space-y-2.5 leading-relaxed">
+          <li class="flex gap-2"><span style="color:#C9A24B">●</span><span>金地集团 触发主业弱化+短债占比 46% 组合，建议 <span class="chip chip-red">重点观察</span></span></li>
+          <li class="flex gap-2"><span style="color:#C9A24B">●</span><span>天津滨海建投 融资渠道畅通，AAA 评级+境外 A- 稳固，可择机加仓</span></li>
+          <li class="flex gap-2"><span style="color:#C9A24B">●</span><span>F汽车零部件 客户集中度上升，建议下沉至大客户信用</span></li>
+          <li class="flex gap-2"><span style="color:#C9A24B">●</span><span>陕西煤业 2026H1 业绩预告净利同比 +47%~53%，信用第一梯队，可作为组合底仓</span></li>
         </ul>
       </div>
     </section>
 
     <!-- Middle -->
-    <section class="col-span-5 space-y-3">
-      <div class="card p-5" id="issuerHeader"></div>
+    <section class="col-span-5 space-y-4 stagger">
+      <div class="card card-accent-blue p-6" id="issuerHeader"></div>
 
-      <div class="card p-5">
-        <div class="flex items-center justify-between mb-3">
-          <div class="text-[14px] font-medium">证据链推理 <span class="text-[11px] text-[color:var(--muted)] ml-2">Evidence → Meaning → Path → Judgement → Follow-up</span></div>
+      <div class="card card-hover p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div class="text-[15px] font-semibold">证据链推理</div>
+            <div class="text-[12px] text-[color:var(--muted)] mt-0.5">Evidence → Meaning → Path → Judgement → Follow-up</div>
+          </div>
           <div class="flex items-center gap-2">
             <button class="btn" onclick="rerunReasoning()">🔄 重新推理</button>
             <span class="chip chip-blue">五步推理</span>
@@ -210,79 +403,85 @@
         <div id="reasoning" class="space-y-4"></div>
       </div>
 
-      <div class="card p-5">
+      <div class="card card-hover p-6">
         <div class="flex items-center justify-between mb-3">
-          <div class="text-[14px] font-medium">近期异动事件</div>
-          <div class="text-[11px] text-[color:var(--muted)]">来源覆盖 公告 · 评级 · 财报 · 舆情 · 行业 · 交易所</div>
+          <div class="text-[15px] font-semibold">近期异动事件</div>
+          <div class="text-[12px] text-[color:var(--muted)]">来源覆盖 公告 · 评级 · 财报 · 舆情 · 行业 · 交易所</div>
         </div>
-        <div id="events" class="space-y-2 max-h-[340px] overflow-auto scroll-thin"></div>
+        <div id="events" class="space-y-2.5 max-h-[340px] overflow-auto scroll-thin"></div>
       </div>
     </section>
 
     <!-- Right -->
-    <section class="col-span-3 space-y-3">
-      <div class="card p-5" id="conclusion"></div>
+    <section class="col-span-3 space-y-4 stagger">
+      <div class="card card-accent p-5" id="conclusion"></div>
 
-      <div class="card p-4">
-        <div class="text-[13px] font-medium mb-2">财务趋势</div>
+      <div class="card card-hover p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-[14px] font-semibold">财务趋势</div>
+          <span class="text-[10px] text-[color:var(--muted-2)]">亿元</span>
+        </div>
         <div style="position:relative;width:100%;height:170px;">
           <canvas id="finChart"></canvas>
         </div>
       </div>
 
-      <div class="card p-4">
-        <div class="text-[13px] font-medium mb-2">信用利差走势 (bp)</div>
+      <div class="card card-hover p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-[14px] font-semibold">信用利差走势</div>
+          <span class="text-[10px] text-[color:var(--muted-2)]">bp</span>
+        </div>
         <div style="position:relative;width:100%;height:150px;">
           <canvas id="spdChart"></canvas>
         </div>
       </div>
 
-      <div class="card p-4">
-        <div class="text-[13px] font-medium mb-2">六维风险画像</div>
+      <div class="card card-hover p-5">
+        <div class="text-[14px] font-semibold mb-3">六维风险画像</div>
         <div style="position:relative;width:100%;height:220px;">
           <canvas id="radarChart"></canvas>
         </div>
-        <div class="text-[11px] text-[color:var(--muted)] mt-1 leading-snug">数值越大代表该维度越稳健。</div>
+        <div class="text-[12px] text-[color:var(--muted)] mt-2 leading-relaxed">数值越大代表该维度越稳健。</div>
       </div>
     </section>
   </main>
 
   <!-- ============ 页面2：证据链推理（大屏） ============ -->
-  <main id="page-reasoning" class="page max-w-[1440px] mx-auto px-6 py-5">
-    <div class="grid grid-cols-12 gap-5">
-      <section class="col-span-3 space-y-3">
-        <div class="card p-4">
-          <div class="text-[13px] font-medium mb-2">选择主体</div>
+  <main id="page-reasoning" class="page max-w-[1440px] mx-auto px-8 py-6">
+    <div class="grid grid-cols-12 gap-6">
+      <section class="col-span-3 space-y-4 stagger">
+        <div class="card card-accent p-5">
+          <div class="text-[14px] font-semibold mb-3">选择主体</div>
           <div id="reasoningIssuerList" class="max-h-[70vh] overflow-auto scroll-thin -mx-2"></div>
         </div>
       </section>
-      <section class="col-span-9 space-y-3">
-        <div class="card p-5" id="reasoningHeader"></div>
-        <div class="card p-6">
-          <div class="flex items-center justify-between mb-4">
-            <div class="text-[15px] font-medium">证据链五步推理（详细版）</div>
+      <section class="col-span-9 space-y-4 stagger">
+        <div class="card card-accent-blue p-6" id="reasoningHeader"></div>
+        <div class="card card-hover p-7">
+          <div class="flex items-center justify-between mb-5">
+            <div class="text-[17px] font-semibold">证据链五步推理（详细版）</div>
             <div class="flex gap-2">
               <button class="btn" onclick="rerunReasoningFull()">🔄 重新推理</button>
               <button class="btn" onclick="downloadReasoning()">📥 导出推理链</button>
             </div>
           </div>
-          <div id="reasoningFull" class="space-y-5"></div>
+          <div id="reasoningFull" class="space-y-6"></div>
         </div>
       </section>
     </div>
   </main>
 
   <!-- ============ 页面3：AI 研究助手 ============ -->
-  <main id="page-assistant" class="page max-w-[1440px] mx-auto px-6 py-5">
-    <div class="grid grid-cols-12 gap-5">
-      <section class="col-span-3 space-y-3">
-        <div class="card p-4">
-          <div class="text-[13px] font-medium mb-2">当前研究主体</div>
+  <main id="page-assistant" class="page max-w-[1440px] mx-auto px-8 py-6">
+    <div class="grid grid-cols-12 gap-6">
+      <section class="col-span-3 space-y-4 stagger">
+        <div class="card card-accent p-5">
+          <div class="text-[14px] font-semibold mb-3">当前研究主体</div>
           <div id="assistantSubject"></div>
         </div>
-        <div class="card p-4">
-          <div class="text-[13px] font-medium mb-3">推荐提问</div>
-          <div class="space-y-1.5" id="quickAsks">
+        <div class="card card-hover p-5">
+          <div class="text-[14px] font-semibold mb-3">推荐提问</div>
+          <div class="space-y-2" id="quickAsks">
             <button class="btn w-full text-left" onclick="ask('帮我总结这家主体的核心信用风险')">帮我总结核心信用风险</button>
             <button class="btn w-full text-left" onclick="ask('这些异动事件是否构成信用资质实质恶化？')">异动是否构成实质恶化？</button>
             <button class="btn w-full text-left" onclick="ask('如果我持有该主体债券，建议动作是什么？')">持仓建议动作是什么？</button>
@@ -290,9 +489,9 @@
             <button class="btn w-full text-left" onclick="ask('生成一段80字信用简评供组合会议使用')">生成80字信用简评</button>
           </div>
         </div>
-        <div class="card p-4">
-          <div class="text-[13px] font-medium mb-2">上下文约束</div>
-          <ul class="text-[11px] text-[color:var(--muted)] space-y-1.5 leading-snug">
+        <div class="card card-hover p-5">
+          <div class="text-[14px] font-semibold mb-3">上下文约束</div>
+          <ul class="text-[12px] text-[color:var(--muted)] space-y-2 leading-relaxed">
             <li>✓ 信用研究框架约束</li>
             <li>✓ 证据链引用强制</li>
             <li>✓ 主体池上下文</li>
@@ -301,17 +500,17 @@
         </div>
       </section>
       <section class="col-span-9">
-        <div class="card p-5 flex flex-col" style="height:calc(100vh - 180px);">
-          <div class="flex items-center justify-between pb-3 border-b border-[color:var(--line)]">
-            <div class="flex items-center gap-2">
-              <span class="chip chip-green flex items-center gap-1"><span class="live-dot"></span>Agent 在线</span>
-              <span class="text-[12px] text-[color:var(--muted)]">证据链模式 · 引用主体池全部信息</span>
+        <div class="card card-accent-blue p-6 flex flex-col" style="height:calc(100vh - 190px);">
+          <div class="flex items-center justify-between pb-4 border-b border-[color:var(--line)]">
+            <div class="flex items-center gap-2.5">
+              <span class="chip chip-green flex items-center gap-1.5"><span class="live-dot"></span>Agent 在线</span>
+              <span class="text-[13px] text-[color:var(--muted)]">证据链模式 · 引用主体池全部信息</span>
             </div>
             <button class="btn" onclick="clearChat()">清空对话</button>
           </div>
-          <div id="chatWindow" class="flex-1 overflow-auto scroll-thin py-4 space-y-3"></div>
-          <div class="pt-3 border-t border-[color:var(--line)] flex gap-2">
-            <input id="chatInput" class="flex-1 px-4 py-2.5 text-[13px] rounded-lg border border-[color:var(--line)]" placeholder="向 CreditLens Agent 提问…（Enter 发送）" onkeydown="if(event.key==='Enter')sendChat()"/>
+          <div id="chatWindow" class="flex-1 overflow-auto scroll-thin py-5 space-y-4"></div>
+          <div class="pt-4 border-t border-[color:var(--line)] flex gap-2.5">
+            <input id="chatInput" class="flex-1 px-4 py-3 text-[14px] rounded-lg border border-[color:var(--line)]" placeholder="向 CreditLens Agent 提问…（Enter 发送）" onkeydown="if(event.key==='Enter')sendChat()"/>
             <button class="btn btn-primary" onclick="sendChat()">发送</button>
           </div>
         </div>
@@ -320,18 +519,18 @@
   </main>
 
   <!-- ============ 页面4：质检 / 复核 ============ -->
-  <main id="page-quality" class="page max-w-[1440px] mx-auto px-6 py-5">
-    <div class="grid grid-cols-12 gap-5">
-      <section class="col-span-4 space-y-3">
-        <div class="card p-4">
-          <div class="text-[13px] font-medium mb-2">上传/粘贴 AI 生成的信评报告</div>
-          <textarea id="qaInput" rows="14" class="w-full text-[12px] p-3 rounded-lg border border-[color:var(--line)] leading-relaxed" placeholder="将其他 AI 工具生成的信评报告贴到此处，CreditLens 会做事实一致性、逻辑一致性、风险遗漏、证据缺失、评级维度完整性五项质检…"></textarea>
+  <main id="page-quality" class="page max-w-[1440px] mx-auto px-8 py-6">
+    <div class="grid grid-cols-12 gap-6">
+      <section class="col-span-4 space-y-4 stagger">
+        <div class="card card-accent p-5">
+          <div class="text-[14px] font-semibold mb-3">上传/粘贴 AI 生成的信评报告</div>
+          <textarea id="qaInput" rows="14" class="w-full text-[13px] p-3.5 rounded-lg border border-[color:var(--line)] leading-relaxed" placeholder="将其他 AI 工具生成的信评报告贴到此处，CreditLens 会做事实一致性、逻辑一致性、风险遗漏、证据缺失、评级维度完整性五项质检…"></textarea>
           <button class="btn btn-primary w-full mt-3" onclick="runQualityCheck()">🔎 开始质检</button>
           <button class="btn w-full mt-2" onclick="loadSampleQA()">加载示例报告</button>
         </div>
-        <div class="card p-4">
-          <div class="text-[13px] font-medium mb-2">质检维度</div>
-          <ul class="text-[12px] text-[color:var(--muted)] space-y-1.5 leading-snug">
+        <div class="card card-hover p-5">
+          <div class="text-[14px] font-semibold mb-3">质检维度</div>
+          <ul class="text-[13px] text-[color:var(--muted)] space-y-2 leading-relaxed">
             <li>① 数据一致性：财报数值 vs 报告数值</li>
             <li>② 结论一致性：判断 vs 支撑证据</li>
             <li>③ 风险遗漏：材料中风险是否覆盖</li>
@@ -341,16 +540,17 @@
         </div>
       </section>
       <section class="col-span-8">
-        <div class="card p-5">
-          <div class="flex items-center justify-between mb-4">
-            <div class="text-[15px] font-medium">质检报告</div>
+        <div class="card card-hover p-6">
+          <div class="flex items-center justify-between mb-5">
+            <div class="text-[17px] font-semibold">质检报告</div>
             <div id="qaScore"></div>
           </div>
-          <div id="qaResults" class="text-[13px] text-[color:var(--muted)] leading-relaxed">
-            <div class="p-8 text-center">
-              <div class="text-[40px] mb-2">📋</div>
-              <div>粘贴或加载一份信评报告开始质检</div>
-              <div class="text-[11px] mt-2">质检不替代研究员判断，仅用于辅助复核 AI 生成内容的可信度</div>
+          <div id="qaResults" class="text-[14px] text-[color:var(--muted)] leading-relaxed">
+            <div class="empty-state">
+              <div class="icon">📋</div>
+              <div class="text-[14px] font-medium text-[color:var(--ink-2)]">粘贴或加载一份信评报告开始质检</div>
+              <div class="text-[12px] mt-2 text-[color:var(--muted)]">质检不替代研究员判断，仅用于辅助复核 AI 生成内容的可信度</div>
+              <button class="btn mt-4" onclick="loadSampleQA()">试试示例报告 →</button>
             </div>
           </div>
         </div>
@@ -359,12 +559,12 @@
   </main>
 
   <!-- ============ 页面5：跟踪清单 ============ -->
-  <main id="page-watchlist" class="page max-w-[1440px] mx-auto px-6 py-5">
-    <div class="grid grid-cols-12 gap-5">
+  <main id="page-watchlist" class="page max-w-[1440px] mx-auto px-8 py-6">
+    <div class="grid grid-cols-12 gap-6">
       <section class="col-span-8">
-        <div class="card p-5">
-          <div class="flex items-center justify-between mb-4">
-            <div class="text-[15px] font-medium">研究员跟踪清单</div>
+        <div class="card card-hover p-6">
+          <div class="flex items-center justify-between mb-5">
+            <div class="text-[17px] font-semibold">研究员跟踪清单</div>
             <div class="flex gap-2">
               <button class="btn" onclick="clearWatchlist()">清空</button>
               <button class="btn btn-primary" onclick="exportWatchlist()">📥 导出</button>
@@ -373,28 +573,36 @@
           <div id="watchlist"></div>
         </div>
       </section>
-      <section class="col-span-4 space-y-3">
-        <div class="card p-4">
-          <div class="text-[13px] font-medium mb-2">新增跟踪问题</div>
-          <input id="wlSubject" class="w-full text-[12px] p-2 mb-2 rounded-lg border border-[color:var(--line)]" placeholder="主体（例：A集团）"/>
-          <textarea id="wlQuestion" rows="3" class="w-full text-[12px] p-2 mb-2 rounded-lg border border-[color:var(--line)]" placeholder="跟踪问题（例：银行授信是否有实质变化）"></textarea>
-          <select id="wlLevel" class="w-full text-[12px] p-2 mb-2 rounded-lg border border-[color:var(--line)]">
+      <section class="col-span-4 space-y-4 stagger">
+        <div class="card card-accent p-5">
+          <div class="text-[14px] font-semibold mb-3">新增跟踪问题</div>
+          <input id="wlSubject" class="w-full text-[13px] p-2.5 mb-2 rounded-lg border border-[color:var(--line)]" placeholder="主体（例：金地集团）"/>
+          <textarea id="wlQuestion" rows="3" class="w-full text-[13px] p-2.5 mb-2 rounded-lg border border-[color:var(--line)]" placeholder="跟踪问题（例：银行授信是否有实质变化）"></textarea>
+          <select id="wlLevel" class="w-full text-[13px] p-2.5 mb-3 rounded-lg border border-[color:var(--line)]">
             <option value="high">高优先级</option>
             <option value="mid">中优先级</option>
             <option value="low">低优先级</option>
           </select>
           <button class="btn btn-primary w-full" onclick="addToWatchlist()">+ 加入清单</button>
         </div>
-        <div class="card p-4">
-          <div class="text-[13px] font-medium mb-2">统计</div>
-          <div id="wlStats" class="text-[12px] text-[color:var(--muted)] space-y-1"></div>
+        <div class="card card-hover p-5">
+          <div class="text-[14px] font-semibold mb-3">统计</div>
+          <div id="wlStats" class="text-[13px] text-[color:var(--muted)] space-y-1.5"></div>
         </div>
       </section>
     </div>
   </main>
 
-  <footer class="max-w-[1440px] mx-auto px-6 pb-6 text-[11px] text-[color:var(--muted)] leading-snug">
-    本 Demo 为 2026 易方达基金校园研究分析大赛 AI 信评赛道参赛作品原型，所有主体名称、财务数据、事件均为虚构，仅用于产品演示。系统边界：辅助信用研究，不替代研究员判断，不构成投资建议。
+  <div class="max-w-[1440px] mx-auto px-8 pt-2 pb-3 flex items-center gap-4 text-[11px] text-[color:var(--muted-2)] flex-wrap">
+    <span class="font-medium text-[color:var(--muted)]">键盘操作</span>
+    <span><span class="kbd">1</span>–<span class="kbd">5</span> 切换页面</span>
+    <span><span class="kbd">J</span> / <span class="kbd">K</span> 上下切主体</span>
+    <span><span class="kbd">/</span> 聚焦搜索</span>
+    <span><span class="kbd">Esc</span> 关闭弹窗</span>
+  </div>
+
+  <footer class="max-w-[1440px] mx-auto px-8 pb-8 text-[12px] text-[color:var(--muted)] leading-relaxed">
+    本 Demo 为 2026 易方达基金校园研究分析大赛 AI 信评赛道参赛作品原型。主体池中金地集团、天津滨海建投、陕西煤业为真实上市/发债主体，相关数据基于公司年报/季报、交易所公告、评级机构公告及主流媒体公开报道整理（数据截至 2026-07）；D 制造、E 消费为虚构对照。系统边界：辅助信用研究，不替代研究员判断，不构成投资建议。
   </footer>
 </div>
 
@@ -406,286 +614,307 @@
 <!-- 抽屉：通知中心 -->
 <div class="drawer" id="drawer">
   <div class="p-5 border-b border-[color:var(--line)] flex items-center justify-between">
-    <div class="text-[15px] font-medium">实时推送中心</div>
+    <div class="text-[16px] font-semibold">实时推送中心</div>
     <button class="btn" onclick="closeDrawer()">✕</button>
   </div>
-  <div id="drawerBody" class="p-4 space-y-3 overflow-auto scroll-thin" style="height:calc(100vh - 65px);"></div>
+  <div id="drawerBody" class="p-4 space-y-3 overflow-auto scroll-thin" style="height:calc(100vh - 68px);"></div>
 </div>
 
 <div id="toastHost"></div>
 
 <script>
-// 模拟数据 — 所有主体、行业、事件均为虚构，仅用于Demo演示
+// 主体池数据 — 前3家为真实上市/发债主体(基于公开资料整理),D/E为虚构对照
+// 数据截至 2026-07,来源:公司年报/季报/交易所公告/评级公司公告/主流媒体
 window.ISSUERS = [
   {
-    id: 'A-GROUP',
-    name: 'A集团',
-    industry: '房地产',
-    rating: 'AA+',
-    outlook: '负面',
-    region: '华东',
+    id: 'JINDI',
+    name: '金地(集团)股份有限公司',
+    shortName: '金地集团',
+    industry: '房地产开发',
+    rating: 'AAA',
+    outlook: '稳定',
+    region: '深圳(上市A股·600383)',
     priority: 'high',
-    priorityScore: 92,
+    priorityScore: 88,
     events: 5,
-    tags: ['再融资弱化', '销售下滑', '股东质押', '舆情负面'],
-    bondCount: 8,
-    shortDebtRatio: 0.62,
-    spread: 320,
-    spreadChange: 85,
+    tags: ['行业尾部承压', '销售大幅下滑', '短债占比46%', '轻资产转型'],
+    bondCount: 0,  // 存量公开债已于2026年4月清零
+    shortDebtRatio: 0.46,
+    spread: 285,
+    spreadChange: 62,
     finance: {
-      revenue: [412, 388, 356, 298, 246],
-      opCashFlow: [58, 42, 21, -8, -35],
-      shortDebt: [95, 118, 142, 168, 185],
-      years: ['2021', '2022', '2023', '2024', '2025H1']
+      revenue: [1204, 819, 754, 358, 122],
+      opCashFlow: [12, 8, 0.16, -3, -8],
+      shortDebt: [188, 156, 132, 128, 125],
+      years: ['2022', '2023', '2024', '2025', '2026Q1']
     },
-    spreadTrend: [235, 240, 248, 262, 275, 290, 305, 320],
+    spreadTrend: [225, 235, 245, 258, 268, 275, 280, 285],
     spreadDates: ['4W前', '3W前', '2W前', '1W前', '6D', '4D', '2D', '今日'],
-    radar: { 偿债: 32, 盈利: 45, 现金流: 28, 融资: 30, 治理: 55, 行业: 40 },
+    radar: { 偿债: 38, 盈利: 22, 现金流: 30, 融资: 48, 治理: 68, 行业: 32 },
     events_detail: [
       {
-        date: '2026-06-28',
-        source: '公司公告',
-        title: '控股股东所持公司股份被司法冻结,冻结比例占其持股38%',
-        type: '治理/股东风险',
+        date: '2026-04-08',
+        source: '21世纪经济报道',
+        title: '金地集团完成"21金地03"及"21金地04"合计约5.22亿元本息兑付,存量公开债正式清零',
+        type: '偿债正面',
         weight: 'high'
       },
       {
-        date: '2026-06-24',
-        source: '交易所',
-        title: '公司拟发行的3年期中票取消发行,原计划规模15亿元',
-        type: '融资弱化',
+        date: '2026-04-07',
+        source: '联合资信',
+        title: '联合资信维持金地集团主体长期信用等级AAA,评级展望稳定,并终止对已到期债项的评级',
+        type: '评级维持',
         weight: 'high'
       },
       {
-        date: '2026-06-20',
-        source: '评级公告',
-        title: '联合资信将主体评级展望由"稳定"下调至"负面"',
-        type: '评级变动',
-        weight: 'high'
-      },
-      {
-        date: '2026-06-15',
-        source: '半年度经营简报',
-        title: '2026H1合同销售额同比下降42%,回款率降至58%',
+        date: '2026-04-04',
+        source: '公司年报',
+        title: '2025年营业收入358.58亿元(同比-52.41%),归母净亏损132.81亿元,计提资产减值70.31亿元',
         type: '经营恶化',
         weight: 'high'
       },
       {
-        date: '2026-06-10',
-        source: '财新/主流媒体',
-        title: '媒体报道A集团某区域项目停工,涉及金额约6.2亿元',
-        type: '舆情负面',
+        date: '2026-03-30',
+        source: '公司公告',
+        title: '截至2025年末有息负债余额670.32亿元(同比-8.82%),银行贷款占比98.6%,一年内到期债务308.72亿元',
+        type: '债务结构',
+        weight: 'mid'
+      },
+      {
+        date: '2026-02-15',
+        source: '中银证券研报',
+        title: '中银证券给予金地集团"增持"评级,提示销售/结算/毛利率/融资落地不及预期等风险,短债占比达46%',
+        type: '卖方观点',
         weight: 'mid'
       }
     ],
     reasoning: [
       {
         step: '原始证据',
-        content: '5项异动事件在30天内密集出现,覆盖股东层面、融资层面、评级层面、经营层面和舆情层面。',
-        evidence: ['公告-2026.06.28', '交易所-2026.06.24', '联合资信-2026.06.20', '经营简报-2026.06.15']
+        content: '5项事件呈现"公开债清零(正面) + 主业深度亏损(负面) + 短债占比46%(结构性压力)"的复杂组合。联合资信2026年4月仍维持AAA评级,但主业收入同比腰斩。',
+        evidence: ['21世纪经济报道-2026.04.08', '联合资信-2026.04.07', '公司年报-2026.04.04']
       },
       {
         step: '信用含义',
-        content: '股东股权冻结提示股东流动性承压;债券取消发行说明市场认购意愿弱化;评级展望下调进一步压制再融资空间。',
-        evidence: ['融资端多重恶化', '外部支持能力下降']
+        content: '公开债清零显著缓解短期兑付压力,但银行贷款占比升至98.6%意味着单一渠道风险抬升;经营现金流从2022年的12亿降至2026Q1的-8亿,反映主业造血能力持续弱化。',
+        evidence: ['融资结构单一化', '主业造血弱化']
       },
       {
         step: '影响路径',
-        content: '股东支持弱化 → 债券市场认购意愿下降 → 再融资渠道收窄 → 短期债务滚续压力上升 → 经营现金流不足以覆盖到期债务。',
-        evidence: ['经营现金流已连续3期恶化', '短债占比升至62%']
+        content: '销售端持续下滑(2026年1月销售12.2亿元 同比-45.78%) → 经营现金流恶化 → 依赖存量资产盘活+代建轻资产业务补充现金流 → 银行贷款成为核心融资渠道 → 若银行不发生抽贷,短期偿债压力可控。',
+        evidence: ['轻资产已成TOP3', '存量盘活22个项目']
       },
       {
         step: '研究判断',
-        content: '当前风险主体非单一事件冲击,而是股东、融资、经营、评级四条链路共振,信用资质呈实质性弱化,而非短期噪音。',
-        evidence: ['多因子共振', '不属于市场情绪扰动']
+        content: '金地属于"自救上岸"的典型混合所有制房企,通过资产处置和股东支持成功度过偿债高峰。当前信用资质呈"评级稳定但基本面弱化"的分化状态,不属于风险主体但需持续跟踪。',
+        evidence: ['联合资信维持AAA', '现金流拐点未至']
       },
       {
         step: '跟踪问题',
-        content: '1) 银行授信是否随之收缩;2) 8月到期的12亿短融是否有兑付安排;3) 是否有股东层面纾困或战投引入;4) 项目停工范围是否扩大。',
-        evidence: ['需人工复核', '3-7天内跟踪']
+        content: '1) 2026H1核心城市(杭州/上海)项目去化情况;2) 代建业务收入占比能否突破15%;3) 银行贷款展期与新增授信情况;4) 一年内到期308.72亿元债务的滚续安排。',
+        evidence: ['半年报-2026.08', '需持续跟踪']
       }
     ],
     conclusion: {
-      opinion: '建议将A集团调入重点观察池,并暂停组合内新增中长期限债券。',
+      opinion: '建议将金地集团调入重点观察池,维持现有银行贷款相关敞口但暂停增量,重点跟踪主业造血能力恢复。',
       reasons: [
-        '再融资能力实质性弱化,债券取消发行叠加评级展望下调',
-        '经营现金流连续3期恶化,短债占比升至62%,偿债压力显著',
-        '股东层面股权冻结提示外部支持能力下降',
-        '多事件在30天内共振,已不属于市场情绪扰动'
+        '公开债清零+联合资信维持AAA提供短期信用安全垫',
+        '但主业深度亏损、经营现金流转负,基本面尚未走出低谷',
+        '融资结构过度依赖银行贷款(98.6%),渠道单一化风险抬升',
+        '轻资产转型有进展但短期不足以对冲开发业务下滑'
       ],
       actions: [
         { label: '重点观察池', level: 'danger' },
-        { label: '暂停新增', level: 'danger' },
-        { label: '缩短久期', level: 'warn' },
-        { label: '7天内复核', level: 'warn' }
+        { label: '暂停增量', level: 'warn' },
+        { label: '半年跟踪', level: 'warn' },
+        { label: '关注银行授信', level: 'info' }
       ]
     }
   },
   {
-    id: 'B-CITY',
-    name: 'B城投',
-    industry: '城投',
-    rating: 'AA+',
+    id: 'BINHAI',
+    name: '天津滨海新区建设投资集团有限公司',
+    shortName: '天津滨海建投',
+    industry: '城投·基础设施',
+    rating: 'AAA',
     outlook: '稳定',
-    region: '中部',
+    region: '天津滨海新区',
     priority: 'high',
-    priorityScore: 78,
-    events: 3,
-    tags: ['区域财力弱', '短债占比高', '土地出让下滑'],
-    bondCount: 12,
-    shortDebtRatio: 0.48,
-    spread: 195,
-    spreadChange: 32,
+    priorityScore: 72,
+    events: 4,
+    tags: ['天津核心平台', '市政府全资', '境外A-评级', '再融资畅通'],
+    bondCount: 15,
+    shortDebtRatio: 0.42,
+    spread: 168,
+    spreadChange: -8,
     finance: {
-      revenue: [86, 92, 95, 88, 41],
-      opCashFlow: [12, 15, 8, -3, -12],
-      shortDebt: [45, 52, 58, 68, 74],
-      years: ['2021', '2022', '2023', '2024', '2025H1']
+      revenue: [280, 305, 325, 342, 158],
+      opCashFlow: [42, 38, 32, 28, 12],
+      shortDebt: [485, 512, 545, 578, 592],
+      years: ['2022', '2023', '2024', '2025', '2026H1']
     },
-    spreadTrend: [168, 172, 175, 180, 185, 188, 192, 195],
+    spreadTrend: [180, 178, 175, 172, 172, 170, 169, 168],
     spreadDates: ['4W前', '3W前', '2W前', '1W前', '6D', '4D', '2D', '今日'],
-    radar: { 偿债: 45, 盈利: 55, 现金流: 40, 融资: 42, 治理: 65, 行业: 48 },
+    radar: { 偿债: 62, 盈利: 55, 现金流: 58, 融资: 75, 治理: 78, 行业: 60 },
     events_detail: [
       {
-        date: '2026-06-26',
-        source: '地方财政公告',
-        title: '所在区域2026H1土地出让收入同比下降38%',
-        type: '区域基本面',
+        date: '2026-04-17',
+        source: '上交所',
+        title: '"26滨海03"公司债成功发行,规模5亿元,期限3年,票面利率2.05%,评级AAA(联合资信)',
+        type: '融资正面',
         weight: 'high'
       },
       {
-        date: '2026-06-22',
-        source: '公司公告',
-        title: '公司短期融资券"26B城投SCP002"完成兑付,规模8亿',
-        type: '偿债正面',
+        date: '2026-04-02',
+        source: '中国货币网',
+        title: '"26滨建投MTN001"中期票据上市流通,规模5亿元,期限3年,票面利率2.07%',
+        type: '融资正面',
+        weight: 'high'
+      },
+      {
+        date: '2026-04-03',
+        source: '募集说明书',
+        title: '拟发行"26滨建投MTN002"募集资金5亿元用于置换"25滨建投CP003"到期短融,融资结构优化',
+        type: '债务置换',
         weight: 'mid'
       },
       {
-        date: '2026-06-18',
-        source: '半年度公告',
-        title: '截至2026H1有息负债余额较年初增长18%,新增以短期为主',
-        type: '债务压力',
-        weight: 'high'
+        date: '2026-08-02',
+        source: '联合国际',
+        title: '联合国际授予兆海投资(BVI,滨海建投间接全资子公司)拟发行美元债"A-"国际长期评级,反映天津市政府强力支持预期',
+        type: '境外评级',
+        weight: 'mid'
       }
     ],
     reasoning: [
       {
         step: '原始证据',
-        content: '3项事件呈现"区域财力弱化+短债滚续加速"的组合。',
-        evidence: ['财政公告-2026.06.26', '半年度公告-2026.06.18']
+        content: '4项事件均围绕"融资渠道畅通+政府支持逻辑"展开,2026年4月境内新发债成本降至2.05%-2.07%,处于AAA城投历史低位。',
+        evidence: ['上交所-2026.04.17', '中国货币网-2026.04.02', '联合国际-2026.08.02']
       },
       {
         step: '信用含义',
-        content: '土地出让下滑直接影响政府支持能力;短债占比上升说明再融资周期缩短。',
-        evidence: ['政府支持弱化', '滚续压力']
+        content: '境内AAA + 境外A-双评级,融资成本走低反映市场认可政府隐性支持;短期融资券按期兑付并置换,滚续机制正常。',
+        evidence: ['双评级支撑', '发行利率历史低位']
       },
       {
         step: '影响路径',
-        content: '区域财政下滑 → 政府隐性支持能力下降 → 平台外部现金流入减少 → 依赖债券市场滚续 → 短债占比升高。',
-        evidence: ['本轮尚有正面事件缓冲', '短融按期兑付']
+        content: '天津市政府全资控股 → 滨海新区核心开发运营平台 → 政府信用背书 → 融资渠道多元(境内债+美元债+银行贷款) → 融资成本处于同评级低位。',
+        evidence: ['市政府100%持股', '战略地位关键']
       },
       {
         step: '研究判断',
-        content: '基本面弱化但兑付纪律仍在,属于"结构性走弱",尚未进入实质风险区间。',
-        evidence: ['非事件驱动', '需观察政府端']
+        content: '天津滨海建投属于典型的"高等级重点城投",信用资质稳定,但需持续跟踪天津市财政收支平衡及区域土地出让节奏,防范尾部政府支持能力弱化。',
+        evidence: ['非风险主体', '结构性关注']
       },
       {
         step: '跟踪问题',
-        content: '1) 下半年土地出让节奏;2) 政府对平台的注资或资产划转是否落地;3) 有息负债增速是否收敛。',
-        evidence: ['季度跟踪', '关注政策文件']
+        content: '1) 天津市2026年一般公共预算收入完成度;2) 滨海新区土地出让金变化;3) 有息负债增速能否维持在10%以内;4) 银行授信可用余额。',
+        evidence: ['季度跟踪', '关注财政数据']
       }
     ],
     conclusion: {
-      opinion: '建议将B城投调入常规观察池,组合内维持现有敞口但暂停加仓。',
+      opinion: '维持天津滨海建投持仓判断,可择机在利差走阔时加仓中长期限债券。',
       reasons: [
-        '区域财力有实质弱化,但兑付纪律仍稳定',
-        '短债占比上升但整体债务规模可控',
-        '需持续跟踪政府端支持力度变化'
+        '境内AAA+境外A-双评级,市场认可度高',
+        '融资成本处于同评级历史低位,滚续机制通畅',
+        '天津市政府全资控股+战略地位关键,支持逻辑稳固',
+        '需持续跟踪区域财政基本面变化'
       ],
       actions: [
-        { label: '常规观察', level: 'warn' },
-        { label: '暂停加仓', level: 'warn' },
+        { label: '常规观察', level: 'info' },
+        { label: '择机加仓', level: 'info' },
         { label: '季度复核', level: 'info' }
       ]
     }
   },
   {
-    id: 'C-COAL',
-    name: 'C能源',
-    industry: '煤炭',
+    id: 'SHAANMEI',
+    name: '陕西煤业股份有限公司',
+    shortName: '陕西煤业',
+    industry: '煤炭开采',
     rating: 'AAA',
     outlook: '稳定',
-    region: '华北',
+    region: '陕西(上市A股·601225)',
     priority: 'mid',
-    priorityScore: 55,
-    events: 2,
-    tags: ['行业价格回落', '现金流稳健'],
-    bondCount: 6,
-    shortDebtRatio: 0.28,
-    spread: 78,
-    spreadChange: 8,
+    priorityScore: 32,
+    events: 3,
+    tags: ['盈利大幅改善', '现金流充裕', '低负债', '央国企背景'],
+    bondCount: 4,
+    shortDebtRatio: 0.18,
+    spread: 62,
+    spreadChange: -5,
     finance: {
-      revenue: [520, 680, 720, 685, 315],
-      opCashFlow: [95, 165, 185, 160, 68],
-      shortDebt: [58, 62, 65, 68, 70],
-      years: ['2021', '2022', '2023', '2024', '2025H1']
+      revenue: [1668, 1708, 1841, 1582, 390],
+      opCashFlow: [485, 502, 424, 353, 97],
+      shortDebt: [58, 55, 52, 48, 45],
+      years: ['2022', '2023', '2024', '2025', '2026Q1']
     },
-    spreadTrend: [70, 71, 72, 74, 75, 76, 77, 78],
+    spreadTrend: [68, 67, 66, 65, 64, 63, 63, 62],
     spreadDates: ['4W前', '3W前', '2W前', '1W前', '6D', '4D', '2D', '今日'],
-    radar: { 偿债: 78, 盈利: 65, 现金流: 82, 融资: 80, 治理: 85, 行业: 52 },
+    radar: { 偿债: 90, 盈利: 82, 现金流: 92, 融资: 85, 治理: 88, 行业: 68 },
     events_detail: [
       {
-        date: '2026-06-25',
-        source: '行业数据',
-        title: '动力煤价格较年初回落22%,行业景气度承压',
-        type: '行业变化',
+        date: '2026-07-11',
+        source: '公司公告',
+        title: '陕西煤业发布2026半年度业绩预告:预计归母净利润112.29-116.87亿元,同比增加47%-53%',
+        type: '经营正面',
+        weight: 'high'
+      },
+      {
+        date: '2026-07-14',
+        source: '国联民生证券研报',
+        title: '国联民生维持"推荐"评级:煤价上涨+投资收益助力26H1业绩大增,公司低负债/高现金/高分红',
+        type: '卖方观点',
         weight: 'mid'
       },
       {
-        date: '2026-06-16',
-        source: '公司公告',
-        title: '2026H1经营现金流68亿,同比下降18%但仍显著为正',
-        type: '经营中性',
-        weight: 'mid'
+        date: '2026-04-25',
+        source: '公司季报',
+        title: '2026Q1营收389.53亿元,归母净利润42.1亿元,经营性现金流净额96.77亿元(同比+37.27%),期末货币资金289.3亿元',
+        type: '经营正面',
+        weight: 'high'
       }
     ],
     reasoning: [
       {
         step: '原始证据',
-        content: '事件集中在行业价格回落带来的盈利压力,主体自身基本面依然稳健。',
-        evidence: ['行业数据', '半年度经营公告']
+        content: '3项事件均为正面:半年报业绩预告大增47-53%、卖方给予"推荐"评级、一季度经营现金流同比+37.27%、货币资金余额289.3亿元。',
+        evidence: ['公司公告-2026.07.11', '公司季报-2026.04.25']
       },
       {
         step: '信用含义',
-        content: '行业压力尚未传导至主体信用资质,现金流覆盖能力仍充足。',
-        evidence: ['经营现金流正', '短债占比低']
+        content: '主体处于煤炭行业头部(A股煤炭板块经营现金流第二,仅次于中国神华),AAA评级+央国企背景+超低短债占比(18%),信用资质极其稳健。',
+        evidence: ['行业头部主体', '财务结构稳健']
       },
       {
         step: '影响路径',
-        content: '煤价下行 → 盈利收窄 → 但现金流仍可覆盖到期债务和资本开支,不构成再融资压力。',
-        evidence: ['属于周期性扰动']
+        content: '煤价回升 → 主业盈利大幅改善(2026H1净利同比+47%~53%) → 经营现金流持续正贡献 → 货币资金充裕(289.3亿元覆盖短债数倍) → 维持高分红能力。',
+        evidence: ['货币资金/短债>6倍', '分红比例历史稳定']
       },
       {
         step: '研究判断',
-        content: '当前属于行业景气变化,主体资质稳定,不建议改变持仓判断。',
-        evidence: ['行业α风险', '主体β可控']
+        content: '陕西煤业属于A股煤炭龙头,信用资质在AAA主体中处于第一梯队。当前煤价上行周期尚未结束,主体信用逻辑无变化,建议维持或增持中长期限债券。',
+        evidence: ['信用极其稳健', '可加大配置']
       },
       {
         step: '跟踪问题',
-        content: '1) 煤价是否继续下探;2) 2026全年经营现金流预期;3) 主要在建项目是否延后。',
-        evidence: ['季度跟踪']
+        content: '1) 2026下半年煤价走势;2) 全年经营现金流预期(参考2025年352.69亿);3) 分红方案落地节奏;4) 在建项目资本开支节奏。',
+        evidence: ['季度跟踪', '低频复核即可']
       }
     ],
     conclusion: {
-      opinion: '维持C能源现有持仓判断,信用资质稳健,行业压力尚未构成主体风险。',
+      opinion: '维持陕西煤业持仓判断,建议在同评级中优先配置,可适度加大中长期限债券敞口。',
       reasons: [
-        '经营现金流仍充足覆盖到期债务',
-        '短债占比仅28%,融资结构良好',
-        '行业压力属周期性,不改变主体信用逻辑'
+        '2026H1业绩预告大幅超预期,盈利拐点确认',
+        '经营现金流充裕,货币资金289亿元覆盖短债多倍',
+        'A股煤炭板块经营现金流第二,行业头部地位稳固',
+        'AAA评级+央国企背景+低负债+高分红,信用资质第一梯队'
       ],
       actions: [
-        { label: '维持判断', level: 'info' },
-        { label: '常规跟踪', level: 'info' }
+        { label: '优先配置', level: 'info' },
+        { label: '中长久期', level: 'info' },
+        { label: '低频跟踪', level: 'info' }
       ]
     }
   },
@@ -1188,7 +1417,7 @@ window.renderAiReply = function(payload) {
   const state = {
     filter: 'all',
     industryFilter: 'all',
-    currentId: 'A-GROUP',
+    currentId: 'JINDI',
     charts: {},
     page: 'dashboard',
     watchlist: [],
@@ -1210,30 +1439,105 @@ window.renderAiReply = function(payload) {
   }
   function currentIssuer() { return ISSUERS.find(x => x.id === state.currentId); }
 
+  // ---------- 利差变动 pill（替代 sparkline） ----------
+  function spreadPill(change, size='sm') {
+    const v = Number(change) || 0;
+    const dir = v > 0 ? 'up' : v < 0 ? 'down' : 'flat';
+    const arr = v > 0 ? '▲' : v < 0 ? '▼' : '—';
+    const abs = Math.abs(v);
+    const pad = size === 'lg' ? 'padding:3px 10px;font-size:12px;' : '';
+    return `<span class="spread-pill ${dir}" style="${pad}">
+      <span class="arr">${arr}</span>${abs}<span style="opacity:.55;font-weight:500">bp/30日</span>
+    </span>`;
+  }
+
+  // ---------- 数字滚动动画 ----------
+  function animateNum(el, target, dur=700) {
+    if (!el) return;
+    const start = 0, t0 = performance.now();
+    function tick(now) {
+      const p = Math.min((now - t0) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(start + (target - start) * eased);
+      if (p < 1) requestAnimationFrame(tick);
+      else { el.textContent = target; el.classList.add('num-flash'); setTimeout(()=>el.classList.remove('num-flash'), 620); }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ---------- 事件严重度 ----------
+  function eventSeverity(e) {
+    if (e.weight === 'high') return 'sev-high';
+    if (e.weight === 'mid') return 'sev-mid';
+    if (['正面','支持','稳'].some(k => (e.type||'').includes(k))) return 'sev-low';
+    return 'sev-mid';
+  }
+
+  // ---------- AI 加载态（骨架 + 进度环） ----------
+  function aiLoadingHTML(title, hint) {
+    return `<div class="ai-loading fade-in">
+      <div class="ai-ring"></div>
+      <div class="text-[13px] font-medium text-[color:var(--ink)]">${title}</div>
+      <div class="ai-steps"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="ai-progress"><i></i></div>
+      <div class="text-[11px] text-[color:var(--muted)]">${hint}</div>
+    </div>`;
+  }
+
   // ---------- 顶部信息 ----------
   document.getElementById('updated').textContent = SUMMARY.updated;
-  document.getElementById('tot').textContent = SUMMARY.total;
-  document.getElementById('et').textContent = SUMMARY.eventsToday;
-  document.getElementById('c-high').textContent = SUMMARY.high;
-  document.getElementById('c-mid').textContent = SUMMARY.mid;
-  document.getElementById('c-low').textContent = SUMMARY.low;
+  animateNum(document.getElementById('tot'), SUMMARY.total);
+  animateNum(document.getElementById('et'), SUMMARY.eventsToday);
+  animateNum(document.getElementById('c-high'), SUMMARY.high);
+  animateNum(document.getElementById('c-mid'), SUMMARY.mid);
+  animateNum(document.getElementById('c-low'), SUMMARY.low);
 
   // ---------- 页面切换 ----------
+  function moveTabIndicator() {
+    const active = document.querySelector('.tab-item.tab-active');
+    const ind = document.getElementById('tabIndicator');
+    if (!active || !ind) return;
+    const nav = active.parentElement;
+    ind.style.left = (active.offsetLeft - nav.scrollLeft) + 'px';
+    ind.style.width = active.offsetWidth + 'px';
+  }
   window.switchPage = function(page) {
     state.page = page;
     document.querySelectorAll('.tab-item').forEach(el => el.classList.toggle('tab-active', el.dataset.page===page));
     document.querySelectorAll('.page').forEach(el => el.classList.remove('on'));
-    document.getElementById('page-'+page).classList.add('on');
+    const target = document.getElementById('page-'+page);
+    target.classList.add('on');
+    // 强制重播入场动画
+    target.style.animation = 'none'; void target.offsetWidth; target.style.animation = '';
+    moveTabIndicator();
     if (page==='reasoning') renderReasoningPage();
     if (page==='assistant') renderAssistantPage();
     if (page==='watchlist') renderWatchlist();
     window.scrollTo({top:0, behavior:'smooth'});
   };
+  window.addEventListener('resize', moveTabIndicator);
+
+  // ---------- 滚动进度条 + 顶栏滚动态 ----------
+  const progressEl = document.getElementById('scrollProgress');
+  const headerEl = document.querySelector('header');
+  let rafPending = false;
+  window.addEventListener('scroll', () => {
+    if (rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(() => {
+      const st = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progressEl.style.width = (max > 0 ? (st / max) * 100 : 0) + '%';
+      headerEl.classList.toggle('scrolled', st > 8);
+      rafPending = false;
+    });
+  }, { passive: true });
 
   // ---------- 筛选 ----------
   window.applyFilter = function(f) {
     state.filter = f;
     document.querySelectorAll('#filters .btn').forEach(b => b.classList.toggle('btn-active', b.dataset.f===f));
+    document.querySelectorAll('.stat-tile').forEach(t => t.classList.toggle('sel', t.dataset.tile===f));
     renderIssuerList();
   };
 
@@ -1261,29 +1565,39 @@ window.renderAiReply = function(payload) {
       .filter(x => state.filter==='all' || x.priority===state.filter)
       .filter(x => state.industryFilter==='all' || x.industry===state.industryFilter)
       .sort((a,b) => b.priorityScore - a.priorityScore)
-      .map(x => `
-        <div class="issuer-row px-3 py-3 border-b border-[color:var(--line)] ${x.id===state.currentId?'on':''}" data-id="${x.id}">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-[14px] font-medium">${x.name}</span>
-              <span class="chip chip-gray">${x.industry}</span>
-              <span class="chip chip-blue">${x.rating}</span>
+      .map((x, idx) => {
+        const up = x.spreadChange >= 0;
+        const sparkColor = up ? '#A32D2D' : '#0F6E56';
+        return `
+        <div class="issuer-row px-3 py-3 border-b border-[color:var(--line)] ${x.id===state.currentId?'on':''}"
+             data-id="${x.id}" data-prio="${x.priority}"
+             style="animation:cardIn .4s cubic-bezier(.22,.8,.3,1) both;animation-delay:${(idx*0.045).toFixed(2)}s">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="text-[14px] font-semibold truncate">${x.name}</span>
+              <span class="chip chip-gray flex-shrink-0">${x.industry}</span>
+              <span class="chip chip-blue flex-shrink-0">${x.rating}</span>
             </div>
-            ${priorityBadge(x.priority)}
+            <div class="flex items-center gap-2 flex-shrink-0">
+              ${priorityBadge(x.priority)}
+            </div>
           </div>
-          <div class="mt-1 text-[11px] text-[color:var(--muted)] flex items-center gap-3 flex-wrap">
-            <span>异动 ${x.events} 项</span>
-            <span>短债占比 ${(x.shortDebtRatio*100).toFixed(0)}%</span>
-            <span>利差 ${x.spread}bp <span style="color:${x.spreadChange>=0?'#A32D2D':'#0F6E56'}">(${x.spreadChange>=0?'+':''}${x.spreadChange})</span></span>
+          <div class="mt-1.5 text-[12px] text-[color:var(--muted)] flex items-center gap-3 flex-wrap">
+            <span>异动 <b class="text-[color:var(--ink-2)] font-semibold num-anim">${x.events}</b> 项</span>
+            <span>短债 <b class="text-[color:var(--ink-2)] font-semibold num-anim">${(x.shortDebtRatio*100).toFixed(0)}%</b></span>
+            <span>利差 <b class="text-[color:var(--ink-2)] font-semibold num-anim">${x.spread}</b>bp
+              <span class="trend-arrow font-semibold" style="color:${sparkColor}">${up?'▲':'▼'}${Math.abs(x.spreadChange)}</span>
+            </span>
           </div>
           <div class="mt-2 flex flex-wrap gap-1">
             ${x.tags.map(t=>`<span class="chip">${t}</span>`).join('')}
           </div>
         </div>
-      `).join('');
-    el.innerHTML = rows || '<div class="p-6 text-center text-[12px] text-[color:var(--muted)]">当前筛选无主体</div>';
+      `;}).join('');
+    el.innerHTML = rows || `<div class="empty-state"><div class="icon">🔍</div><div class="text-[13px] text-[color:var(--muted)]">当前筛选无匹配主体</div><div class="text-[11px] text-[color:var(--muted-2)] mt-1">试试切换优先级或行业筛选</div></div>`;
     el.querySelectorAll('.issuer-row').forEach(row => {
       row.addEventListener('click', () => {
+        if (row.dataset.id === state.currentId) return;
         state.currentId = row.dataset.id;
         renderIssuerList();
         renderDetail();
@@ -1295,48 +1609,70 @@ window.renderAiReply = function(payload) {
   // ---------- 详情渲染（主看板） ----------
   function renderHeader() {
     const x = currentIssuer();
+    const up = x.spreadChange >= 0;
+    const col = up ? '#A32D2D' : '#0F6E56';
     document.getElementById('issuerHeader').innerHTML = `
       <div class="fade-in">
-        <div class="flex items-center justify-between">
-          <div>
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0">
             <div class="flex items-center gap-2 flex-wrap">
-              <div class="text-[18px] font-medium">${x.name}</div>
+              <div class="text-[21px] font-semibold tracking-tight">${x.name}</div>
               <span class="chip chip-gray">${x.industry}</span>
               <span class="chip chip-blue">${x.rating} · 展望${x.outlook}</span>
               <span class="chip">${x.region}</span>
               ${priorityBadge(x.priority)}
             </div>
-            <div class="mt-2 text-[12px] text-[color:var(--muted)]">
-              存量债券 ${x.bondCount} 只 · 短债占比 ${(x.shortDebtRatio*100).toFixed(0)}% · 30天异动 ${x.events} 项 · 综合优先级评分 <span class="text-[color:var(--ink)] font-medium">${x.priorityScore}</span>
+            <div class="mt-2.5 flex items-center gap-4 flex-wrap text-[12px] text-[color:var(--muted)]">
+              <span>存量债券 <b class="text-[color:var(--ink)] text-[14px] font-semibold num-anim">${x.bondCount}</b> 只</span>
+              <span class="w-px h-3 bg-[color:var(--line)]"></span>
+              <span>短债占比 <b class="text-[color:var(--ink)] text-[14px] font-semibold num-anim">${(x.shortDebtRatio*100).toFixed(0)}%</b></span>
+              <span class="w-px h-3 bg-[color:var(--line)]"></span>
+              <span>30天异动 <b class="text-[color:var(--ink)] text-[14px] font-semibold num-anim">${x.events}</b> 项</span>
+              <span class="w-px h-3 bg-[color:var(--line)]"></span>
+              <span>优先级评分 <b class="text-[color:var(--ink)] text-[14px] font-semibold num-anim" id="hdScore">${x.priorityScore}</b></span>
+            </div>
+            <!-- 优先级评分条 -->
+            <div class="mt-2.5 w-full max-w-[300px] h-1.5 rounded-full overflow-hidden" style="background:#EFECE2">
+              <div style="height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,${x.priority==='high'?'#A32D2D,#D06A4B':x.priority==='mid'?'#BA7517,#D8A64C':'#0F6E56,#4FA88C'});transition:width 1s cubic-bezier(.22,.8,.3,1)" id="hdBar"></div>
             </div>
           </div>
-          <div class="text-right">
-            <div class="text-[11px] text-[color:var(--muted)]">信用利差</div>
-            <div class="text-[22px] font-medium">${x.spread}<span class="text-[12px] text-[color:var(--muted)] ml-1">bp</span></div>
-            <div class="text-[12px]" style="color:${x.spreadChange>=0?'#A32D2D':'#0F6E56'}">30日 ${x.spreadChange>=0?'+':''}${x.spreadChange} bp</div>
+          <div class="text-right flex-shrink-0">
+            <div class="text-[11px] text-[color:var(--muted)] tracking-wide">信用利差</div>
+            <div class="text-[28px] font-semibold tracking-tight leading-none mt-1 num-anim">${x.spread}<span class="text-[13px] text-[color:var(--muted)] ml-1 font-normal">bp</span></div>
+            <div class="text-[12px] mt-1 font-semibold flex items-center justify-end gap-1" style="color:${col}">
+              <span>${up?'▲':'▼'} ${Math.abs(x.spreadChange)} bp</span>
+              <span class="text-[10px] font-normal text-[color:var(--muted)]">/30日</span>
+            </div>
           </div>
         </div>
-        <div class="mt-3 flex flex-wrap gap-2 items-center">
+        <div class="mt-3.5 pt-3 border-t border-[color:var(--line)] flex flex-wrap gap-2 items-center">
           ${x.tags.map(t=>`<span class="chip chip-amber">${t}</span>`).join('')}
           <button class="btn ml-auto" onclick="askInAssistant()">💬 在 AI 助手中问</button>
           <button class="btn btn-primary" onclick="addCurrentToWatchlist()">+ 加入跟踪</button>
         </div>
       </div>
     `;
+    // 评分条动画
+    requestAnimationFrame(() => {
+      const bar = document.getElementById('hdBar');
+      if (bar) bar.style.width = Math.min(x.priorityScore, 100) + '%';
+    });
   }
 
   function renderReasoning() {
     const x = currentIssuer();
     document.getElementById('reasoning').innerHTML = x.reasoning.map((s,i)=>`
-      <div class="flex gap-3 fade-in">
+      <div class="flex gap-3" style="animation:cardIn .45s cubic-bezier(.22,.8,.3,1) both;animation-delay:${(i*0.08).toFixed(2)}s">
         <div class="flex flex-col items-center">
-          <div class="step-dot"></div>
-          ${i<x.reasoning.length-1?'<div class="step-line flex-1 mt-1"></div>':''}
+          <div class="step-dot" style="animation-delay:${(i*0.08+0.1).toFixed(2)}s"></div>
+          ${i<x.reasoning.length-1?`<div class="step-line flex-1 mt-1" style="--d:${(i*0.08+0.2).toFixed(2)}s"></div>`:''}
         </div>
-        <div class="flex-1 pb-3 border-b border-[color:var(--line)]">
-          <div class="text-[12px] text-[color:var(--muted)]">Step ${i+1}</div>
-          <div class="text-[13px] font-medium mt-0.5">${s.step}</div>
-          <div class="text-[13px] leading-relaxed mt-1">${s.content}</div>
+        <div class="flex-1 pb-4 ${i<x.reasoning.length-1?'border-b border-[color:var(--line)]':''}">
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-semibold tracking-widest uppercase px-1.5 py-0.5 rounded" style="background:#EEF4F1;color:#0F6E56">Step ${i+1}</span>
+            <div class="text-[14px] font-semibold text-[color:var(--ink)]">${s.step}</div>
+          </div>
+          <div class="text-[13px] leading-relaxed mt-1.5 text-[color:var(--ink-2)]">${s.content}</div>
           <div class="mt-2">
             ${s.evidence.map((e,j)=>`<span class="evi-badge" onclick="showEvidence('${x.id}',${i},${j})">📎 ${e}</span>`).join('')}
           </div>
@@ -1355,15 +1691,17 @@ window.renderAiReply = function(payload) {
   function renderEvents() {
     const x = currentIssuer();
     document.getElementById('events').innerHTML = x.events_detail.map((e,i)=>`
-      <div class="p-3 rounded-lg border border-[color:var(--line)] fade-in cursor-pointer hover:border-[color:#B4B2A9]" style="background:#FAF8F2" onclick="showEventDetail('${x.id}',${i})">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="chip ${eventChip(e.type)}">${e.type}</span>
-            <span class="text-[11px] text-[color:var(--muted)]">${e.source}</span>
+      <div class="evt-card ${eventSeverity(e)} p-3.5 rounded-lg border border-[color:var(--line)] cursor-pointer"
+           style="background:#FAF8F2;animation:cardIn .4s cubic-bezier(.22,.8,.3,1) both;animation-delay:${(i*0.06).toFixed(2)}s"
+           onclick="showEventDetail('${x.id}',${i})">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="chip ${eventChip(e.type)} flex-shrink-0">${e.type}</span>
+            <span class="text-[12px] text-[color:var(--muted)] truncate">${e.source}</span>
           </div>
-          <span class="text-[11px] text-[color:var(--muted)]">${e.date}</span>
+          <span class="text-[11px] text-[color:var(--muted-2)] flex-shrink-0 font-medium num-anim">${e.date}</span>
         </div>
-        <div class="mt-1 text-[13px] leading-snug">${e.title}</div>
+        <div class="mt-1.5 text-[13px] leading-relaxed text-[color:var(--ink-2)]">${e.title}</div>
       </div>
     `).join('');
   }
@@ -1373,24 +1711,24 @@ window.renderAiReply = function(payload) {
     const c = x.conclusion;
     document.getElementById('conclusion').innerHTML = `
       <div class="fade-in">
-        <div class="flex items-center gap-2 mb-2">
-          <span class="chip chip-green">AI 研究结论</span>
-          <span class="text-[11px] text-[color:var(--muted)]">附证据链 · 可复核</span>
+        <div class="flex items-center gap-2 mb-3">
+          <span class="chip chip-green flex items-center gap-1"><span class="live-dot" style="width:5px;height:5px"></span>AI 研究结论</span>
+          <span class="text-[11px] text-[color:var(--muted-2)]">附证据链 · 可复核</span>
         </div>
-        <div class="text-[14px] leading-relaxed font-medium">${c.opinion}</div>
-        <div class="mt-3">
-          <div class="text-[12px] text-[color:var(--muted)] mb-1">支撑逻辑</div>
-          <ul class="text-[13px] leading-relaxed space-y-1 list-disc pl-4">
-            ${c.reasons.map(r=>`<li>${r}</li>`).join('')}
+        <div class="conc-opinion text-[15px] leading-relaxed font-semibold text-[color:var(--ink)]">${c.opinion}</div>
+        <div class="mt-4">
+          <div class="text-[11px] text-[color:var(--muted)] mb-2 font-semibold tracking-wide uppercase">支撑逻辑</div>
+          <ul class="text-[13px] leading-relaxed space-y-2 text-[color:var(--ink-2)]">
+            ${c.reasons.map((r,i)=>`<li class="flex gap-2" style="animation:cardIn .4s ease both;animation-delay:${(i*0.07).toFixed(2)}s"><span class="flex-shrink-0 inline-flex items-center justify-center rounded-full text-[9px] font-semibold" style="width:15px;height:15px;margin-top:3px;background:#0F1E3D;color:#C9A24B">${i+1}</span><span>${r}</span></li>`).join('')}
           </ul>
         </div>
-        <div class="mt-3">
-          <div class="text-[12px] text-[color:var(--muted)] mb-1.5">建议动作</div>
+        <div class="mt-4">
+          <div class="text-[11px] text-[color:var(--muted)] mb-2 font-semibold tracking-wide uppercase">建议动作</div>
           <div class="flex flex-wrap gap-2">
-            ${c.actions.map(a=>`<span class="px-2.5 py-1 rounded-md text-[12px] action-${a.level}">${a.label}</span>`).join('')}
+            ${c.actions.map((a,i)=>`<span class="px-3 py-1.5 rounded-md text-[12px] font-semibold action-${a.level}" style="animation:cardIn .35s cubic-bezier(.34,1.4,.64,1) both;animation-delay:${(i*0.06).toFixed(2)}s">${a.label}</span>`).join('')}
           </div>
         </div>
-        <div class="mt-3 text-[11px] text-[color:var(--muted)] leading-snug border-t border-[color:var(--line)] pt-2">
+        <div class="mt-4 text-[11px] text-[color:var(--muted-2)] leading-relaxed border-t border-[color:var(--line)] pt-2.5">
           本结论由信元 Agent 基于信用研究框架与多源证据生成，不构成投资建议。
         </div>
       </div>
@@ -1399,35 +1737,61 @@ window.renderAiReply = function(payload) {
 
   // ---------- 图表 ----------
   function destroyChart(k){ if(state.charts[k]){ state.charts[k].destroy(); state.charts[k]=null; } }
+  const CHART_FONT = { family:'-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif' };
+  const CHART_TOOLTIP = {
+    backgroundColor:'rgba(15,30,61,.92)', titleColor:'#C9A24B', bodyColor:'#F5F3EA',
+    padding:10, cornerRadius:8, displayColors:true, boxWidth:8, boxHeight:8, boxPadding:4,
+    titleFont:{...CHART_FONT, size:12, weight:'600'}, bodyFont:{...CHART_FONT, size:11},
+    borderColor:'rgba(201,162,75,.3)', borderWidth:1
+  };
   function renderCharts() {
     const x = currentIssuer();
     destroyChart('fin');
     state.charts.fin = new Chart(document.getElementById('finChart'), {
       type:'line',
       data:{ labels:x.finance.years, datasets:[
-        {label:'收入', data:x.finance.revenue, borderColor:'#185FA5', backgroundColor:'rgba(24,95,165,.08)', tension:.3, borderWidth:2, pointRadius:3},
-        {label:'经营现金流', data:x.finance.opCashFlow, borderColor:'#0F6E56', backgroundColor:'rgba(15,110,86,.08)', tension:.3, borderWidth:2, pointRadius:3},
-        {label:'短期债务', data:x.finance.shortDebt, borderColor:'#A32D2D', backgroundColor:'rgba(163,45,45,.08)', tension:.3, borderWidth:2, pointRadius:3, borderDash:[4,3]}
+        {label:'收入', data:x.finance.revenue, borderColor:'#185FA5', backgroundColor:'rgba(24,95,165,.08)', tension:.35, borderWidth:2, pointRadius:0, pointHoverRadius:5, pointHoverBorderWidth:2, pointHoverBackgroundColor:'#fff', pointHoverBorderColor:'#185FA5'},
+        {label:'经营现金流', data:x.finance.opCashFlow, borderColor:'#0F6E56', backgroundColor:'rgba(15,110,86,.1)', fill:true, tension:.35, borderWidth:2, pointRadius:0, pointHoverRadius:5, pointHoverBorderWidth:2, pointHoverBackgroundColor:'#fff', pointHoverBorderColor:'#0F6E56'},
+        {label:'短期债务', data:x.finance.shortDebt, borderColor:'#A32D2D', backgroundColor:'rgba(163,45,45,.08)', tension:.35, borderWidth:1.8, pointRadius:0, pointHoverRadius:5, borderDash:[5,3], pointHoverBorderWidth:2, pointHoverBackgroundColor:'#fff', pointHoverBorderColor:'#A32D2D'}
       ]},
       options:{ responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{position:'bottom', labels:{font:{size:11}, boxWidth:10}}},
-        scales:{ x:{ticks:{font:{size:10}}}, y:{ticks:{font:{size:10}}}}}
+        animation:{ duration:900, easing:'easeOutQuart' },
+        interaction:{ mode:'index', intersect:false },
+        plugins:{ legend:{position:'bottom', labels:{font:{...CHART_FONT,size:10}, boxWidth:8, boxHeight:8, padding:12, usePointStyle:true, pointStyle:'circle'}},
+                  tooltip:CHART_TOOLTIP },
+        scales:{ x:{ticks:{font:{...CHART_FONT,size:10}, color:'#8C8A82'}, grid:{display:false}, border:{color:'#EAE7DC'}},
+                 y:{ticks:{font:{...CHART_FONT,size:10}, color:'#8C8A82'}, grid:{color:'rgba(234,231,220,.7)', drawTicks:false}, border:{display:false}}}}
     });
     destroyChart('spd');
+    const spdUp = x.spreadChange >= 0;
     state.charts.spd = new Chart(document.getElementById('spdChart'), {
       type:'line',
-      data:{ labels:x.spreadDates, datasets:[{ label:'利差', data:x.spreadTrend, borderColor:'#BA7517', backgroundColor:'rgba(186,117,23,.12)', fill:true, tension:.35, borderWidth:2, pointRadius:3 }]},
+      data:{ labels:x.spreadDates, datasets:[{ label:'信用利差', data:x.spreadTrend,
+        borderColor: spdUp?'#A32D2D':'#0F6E56',
+        backgroundColor: spdUp?'rgba(163,45,45,.13)':'rgba(15,110,86,.13)',
+        fill:true, tension:.4, borderWidth:2.2, pointRadius:0, pointHoverRadius:5,
+        pointHoverBackgroundColor:'#fff', pointHoverBorderWidth:2,
+        pointHoverBorderColor: spdUp?'#A32D2D':'#0F6E56' }]},
       options:{ responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
-        scales:{ x:{ticks:{font:{size:10}}}, y:{ticks:{font:{size:10}}}}}
+        animation:{ duration:1000, easing:'easeOutQuart' },
+        interaction:{ mode:'index', intersect:false },
+        plugins:{legend:{display:false}, tooltip:{...CHART_TOOLTIP, callbacks:{label:(c)=>`  ${c.parsed.y} bp`}}},
+        scales:{ x:{ticks:{font:{...CHART_FONT,size:10}, color:'#8C8A82'}, grid:{display:false}, border:{color:'#EAE7DC'}},
+                 y:{ticks:{font:{...CHART_FONT,size:10}, color:'#8C8A82'}, grid:{color:'rgba(234,231,220,.7)', drawTicks:false}, border:{display:false}}}}
     });
     destroyChart('radar');
     state.charts.radar = new Chart(document.getElementById('radarChart'), {
       type:'radar',
-      data:{ labels:Object.keys(x.radar), datasets:[{label:'当前', data:Object.values(x.radar), borderColor:'#0F6E56', backgroundColor:'rgba(15,110,86,.18)', borderWidth:2, pointRadius:2}]},
+      data:{ labels:Object.keys(x.radar), datasets:[{label:'稳健度', data:Object.values(x.radar),
+        borderColor:'#0F6E56', backgroundColor:'rgba(15,110,86,.16)', borderWidth:2,
+        pointRadius:2.5, pointBackgroundColor:'#0F6E56', pointHoverRadius:5,
+        pointHoverBackgroundColor:'#C9A24B', pointHoverBorderColor:'#0F1E3D'}]},
       options:{ responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
-        scales:{ r:{min:0,max:100,ticks:{display:false,stepSize:20},pointLabels:{font:{size:11}},grid:{color:'#E5E3DA'},angleLines:{color:'#E5E3DA'}}}}
+        animation:{ duration:1000, easing:'easeOutQuart' },
+        plugins:{legend:{display:false}, tooltip:{...CHART_TOOLTIP, callbacks:{label:(c)=>`  ${c.label} ${c.parsed.r}/100`}}},
+        scales:{ r:{min:0,max:100,ticks:{display:false,stepSize:20},
+                    pointLabels:{font:{...CHART_FONT,size:11,weight:'500'}, color:'#4A4842'},
+                    grid:{color:'#E8E5DA'}, angleLines:{color:'#E8E5DA'}}}}
     });
   }
 
@@ -1453,12 +1817,12 @@ window.renderAiReply = function(payload) {
       });
     });
     if (!results.length) {
-      searchDropdown.innerHTML = '<div class="p-4 text-[12px] text-[color:var(--muted)] text-center">未找到匹配结果</div>';
+      searchDropdown.innerHTML = '<div class="p-4 text-[13px] text-[color:var(--muted)] text-center">未找到匹配结果</div>';
     } else {
       searchDropdown.innerHTML = results.slice(0,10).map(r=>`
-        <div class="px-3 py-2 border-b border-[color:var(--line)] hover:bg-[color:#F5F3EA] cursor-pointer text-[12px]" data-id="${r.id}" data-e="${r.eIdx??''}">
+        <div class="px-3.5 py-2.5 border-b border-[color:var(--line)] hover:bg-[color:#F5F3EA] cursor-pointer text-[13px]" data-id="${r.id}" data-e="${r.eIdx??''}">
           <div class="flex items-center gap-2"><span class="chip chip-blue">${r.type}</span><span class="font-medium">${r.label}</span></div>
-          <div class="text-[11px] text-[color:var(--muted)] mt-0.5">${r.sub}</div>
+          <div class="text-[12px] text-[color:var(--muted)] mt-1">${r.sub}</div>
         </div>
       `).join('');
       searchDropdown.querySelectorAll('[data-id]').forEach(el => el.addEventListener('click', () => {
@@ -1486,14 +1850,14 @@ window.renderAiReply = function(payload) {
             <span class="chip">${e.source}</span>
             <span class="chip">${e.date}</span>
           </div>
-          <div class="text-[16px] font-medium mt-2">${e.title}</div>
-          <div class="text-[12px] text-[color:var(--muted)] mt-1">主体：${x.name} · ${x.industry} · ${x.rating}</div>
+          <div class="text-[17px] font-semibold mt-2 leading-snug">${e.title}</div>
+          <div class="text-[12px] text-[color:var(--muted)] mt-1.5">主体：${x.name} · ${x.industry} · ${x.rating}</div>
         </div>
         <button class="btn" onclick="closeModal()">✕</button>
       </div>
       <div class="mt-4 border-t border-[color:var(--line)] pt-4">
-        <div class="text-[12px] text-[color:var(--muted)] mb-1">AI 分析（证据链五步）</div>
-        <div class="space-y-3 mt-2 text-[13px] leading-relaxed">
+        <div class="text-[12px] text-[color:var(--muted)] mb-2 font-medium">AI 分析（证据链五步）</div>
+        <div class="space-y-2.5 mt-2 text-[13px] leading-relaxed">
           <div><span class="chip chip-blue">Step 1 · 事件识别</span> ${e.title}</div>
           <div><span class="chip chip-blue">Step 2 · 信用含义</span> 该事件属于「${e.type}」，权重等级 ${e.weight||'中'}。</div>
           <div><span class="chip chip-blue">Step 3 · 影响路径</span> 可能通过「${e.type}」影响主体的偿债/融资/经营/治理链条，需结合其他维度共振判断。</div>
@@ -1516,15 +1880,15 @@ window.renderAiReply = function(payload) {
       <div class="flex items-start justify-between mb-3">
         <div>
           <span class="chip chip-blue">证据引用</span>
-          <div class="text-[16px] font-medium mt-2">${ev}</div>
-          <div class="text-[12px] text-[color:var(--muted)] mt-1">来自 ${x.name} · 推理 Step ${i+1}</div>
+          <div class="text-[17px] font-semibold mt-2 leading-snug">${ev}</div>
+          <div class="text-[12px] text-[color:var(--muted)] mt-1.5">来自 ${x.name} · 推理 Step ${i+1}</div>
         </div>
         <button class="btn" onclick="closeModal()">✕</button>
       </div>
       <div class="mt-4 border-t border-[color:var(--line)] pt-4 text-[13px] leading-relaxed">
-        <div class="text-[12px] text-[color:var(--muted)] mb-1">推理步骤所属结论</div>
-        <div class="p-3 rounded-lg" style="background:#F5F3EA">${s.content}</div>
-        <div class="mt-3 text-[12px] text-[color:var(--muted)]">在真实场景中，此处会展开原文段落、数据来源链接与时间戳，供研究员一键复核。</div>
+        <div class="text-[12px] text-[color:var(--muted)] mb-2 font-medium">推理步骤所属结论</div>
+        <div class="p-3.5 rounded-lg" style="background:#F5F3EA">${s.content}</div>
+        <div class="mt-3.5 text-[12px] text-[color:var(--muted)] leading-relaxed">在真实场景中，此处会展开原文段落、数据来源链接与时间戳，供研究员一键复核。</div>
       </div>
     `;
     document.getElementById('evtModal').classList.add('on');
@@ -1532,9 +1896,9 @@ window.renderAiReply = function(payload) {
 
   // ---------- 模拟推送 ----------
   const PUSH_TEMPLATES = [
-    {id:'A-GROUP', title:'A集团一致行动人再度增持解押股份 0.5%', type:'治理/中性', source:'公司公告', weight:'mid'},
+    {id:'JINDI', title:'金地集团公告代建业务新增签约面积 1531 万㎡，同比增长 59%', type:'经营正面', source:'公司公告', weight:'mid'},
     {id:'H-STEEL', title:'H钢铁获地方国资纾困专项贷款 20 亿元签约', type:'融资支持', source:'公司公告', weight:'high'},
-    {id:'B-CITY', title:'B城投所在区域上半年一般公共预算收入同比下滑 6.2%', type:'外部支持弱化', source:'政府披露', weight:'high'},
+    {id:'BINHAI', title:'天津滨海建投拟发行"26滨建投MTN002"，规模 5 亿元置换到期短融', type:'融资正面', source:'募集说明书', weight:'mid'},
     {id:'F-AUTO', title:'F汽车零部件核心客户产量指引下调 8%', type:'经营风险', source:'行业新闻', weight:'high'},
     {id:'D-CHEM', title:'D化工原料成本环比下降 4%，毛利率有所修复', type:'盈利正面', source:'行业数据', weight:'mid'}
   ];
@@ -1561,23 +1925,23 @@ window.renderAiReply = function(payload) {
   function renderDrawer() {
     const el = document.getElementById('drawerBody');
     const defaults = [
-      {subject:'A集团', title:'控股股东所持股份被司法冻结', type:'治理/股东风险', time:'09:45', weight:'high'},
-      {subject:'H钢铁', title:'地方国资完成对 H 钢铁的股权重组签约', type:'融资支持', time:'11:20', weight:'high'},
-      {subject:'B城投', title:'区域土地出让收入连续三个季度同比下滑', type:'外部支持弱化', time:'13:10', weight:'mid'}
+      {subject:'金地集团', title:'2025年报披露：全年亏损 132.81 亿元，短债占比 46%', type:'经营恶化', time:'09:45', weight:'high'},
+      {subject:'陕西煤业', title:'2026 半年度业绩预告：归母净利润同比 +47%~53%', type:'经营正面', time:'11:20', weight:'high'},
+      {subject:'天津滨海建投', title:'新发行"26滨海03"公司债利率 2.05%，创同评级新低', type:'融资正面', time:'13:10', weight:'mid'}
     ];
     const all = [...state.notifications, ...defaults];
     el.innerHTML = all.length ? all.map(n => `
-      <div class="p-3 rounded-lg border border-[color:var(--line)] slide-in cursor-pointer hover:border-[color:#B4B2A9]" style="background:#FAF8F2" onclick="jumpTo('${n.id||''}','${n.subject}')">
+      <div class="p-3.5 rounded-lg border border-[color:var(--line)] slide-in cursor-pointer hover:border-[color:#B4B2A9] transition-colors" style="background:#FAF8F2" onclick="jumpTo('${n.id||''}','${n.subject}')">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="chip ${eventChip(n.type)}">${n.type}</span>
-            <span class="text-[11px] text-[color:var(--muted)]">${n.subject}</span>
+            <span class="text-[12px] text-[color:var(--muted)]">${n.subject}</span>
           </div>
-          <span class="text-[11px] text-[color:var(--muted)]">${n.time}</span>
+          <span class="text-[12px] text-[color:var(--muted)]">${n.time}</span>
         </div>
-        <div class="mt-1 text-[13px] leading-snug">${n.title}</div>
+        <div class="mt-1.5 text-[13px] leading-relaxed">${n.title}</div>
       </div>
-    `).join('') : '<div class="text-center text-[12px] text-[color:var(--muted)] py-8">暂无推送</div>';
+    `).join('') : '<div class="text-center text-[13px] text-[color:var(--muted)] py-10">暂无推送</div>';
   }
   window.jumpTo = function(id, subject) {
     if (id) { state.currentId=id; renderIssuerList(); renderDetail(); }
@@ -1592,30 +1956,37 @@ window.renderAiReply = function(payload) {
   // ---------- 证据链推理页 ----------
   function renderReasoningPage() {
     const list = document.getElementById('reasoningIssuerList');
-    list.innerHTML = ISSUERS.sort((a,b)=>b.priorityScore-a.priorityScore).map(x=>`
-      <div class="issuer-row px-3 py-2 border-b border-[color:var(--line)] ${x.id===state.currentId?'on':''}" onclick="pickReasoning('${x.id}')">
-        <div class="flex items-center justify-between">
-          <div class="text-[13px] font-medium">${x.name}</div>
+    list.innerHTML = ISSUERS.sort((a,b)=>b.priorityScore-a.priorityScore).map((x,idx)=>`
+      <div class="issuer-row px-3 py-2.5 border-b border-[color:var(--line)] ${x.id===state.currentId?'on':''}"
+           data-prio="${x.priority}" onclick="pickReasoning('${x.id}')"
+           style="animation:cardIn .4s cubic-bezier(.22,.8,.3,1) both;animation-delay:${(idx*0.04).toFixed(2)}s">
+        <div class="flex items-center justify-between gap-2">
+          <div class="text-[14px] font-semibold truncate">${x.name}</div>
           ${priorityBadge(x.priority)}
         </div>
-        <div class="text-[11px] text-[color:var(--muted)] mt-0.5">${x.industry} · 异动 ${x.events} 项</div>
+        <div class="text-[12px] text-[color:var(--muted)] mt-1 flex items-center justify-between gap-2">
+          <span>${x.industry} · 异动 ${x.events} 项</span>
+          ${spreadPill(x.spreadChange)}
+        </div>
       </div>
     `).join('');
     const x = currentIssuer();
+    const up = x.spreadChange >= 0;
     document.getElementById('reasoningHeader').innerHTML = `
-      <div class="flex items-center justify-between">
-        <div>
+      <div class="flex items-start justify-between gap-4 fade-in">
+        <div class="min-w-0">
           <div class="flex items-center gap-2 flex-wrap">
-            <div class="text-[18px] font-medium">${x.name}</div>
+            <div class="text-[21px] font-semibold tracking-tight">${x.name}</div>
             <span class="chip chip-gray">${x.industry}</span>
             <span class="chip chip-blue">${x.rating}</span>
             ${priorityBadge(x.priority)}
           </div>
-          <div class="text-[12px] text-[color:var(--muted)] mt-1">${x.conclusion.opinion}</div>
+          <div class="text-[13px] text-[color:var(--ink-2)] mt-2 leading-relaxed conc-opinion">${x.conclusion.opinion}</div>
         </div>
-        <div class="text-right">
-          <div class="text-[11px] text-[color:var(--muted)]">利差 / 优先级评分</div>
-          <div class="text-[14px] font-medium">${x.spread}bp · ${x.priorityScore}</div>
+        <div class="text-right flex-shrink-0">
+          <div class="text-[11px] text-[color:var(--muted)] tracking-wide">利差 / 优先级评分</div>
+          <div class="text-[19px] font-semibold mt-1 num-anim">${x.spread}<span class="text-[12px] text-[color:var(--muted)] font-normal">bp</span> <span class="text-[color:var(--muted-2)] font-normal">·</span> ${x.priorityScore}</div>
+          <div class="mt-1.5 flex justify-end">${spreadPill(x.spreadChange, 'lg')}</div>
         </div>
       </div>
     `;
@@ -1624,14 +1995,17 @@ window.renderAiReply = function(payload) {
   function renderReasoningFullSteps() {
     const x = currentIssuer();
     document.getElementById('reasoningFull').innerHTML = x.reasoning.map((s,i)=>`
-      <div class="fade-in p-4 rounded-xl" style="background:#FAF8F2;border:1px solid var(--line)">
-        <div class="flex items-start gap-3">
-          <div class="rounded-full flex items-center justify-center flex-shrink-0" style="width:32px;height:32px;background:#0F6E56;color:#fff;font-size:13px">${i+1}</div>
-          <div class="flex-1">
-            <div class="text-[15px] font-medium">${s.step}</div>
-            <div class="text-[13px] leading-relaxed mt-2">${s.content}</div>
-            <div class="mt-3">
-              <div class="text-[11px] text-[color:var(--muted)] mb-1">引用证据</div>
+      <div class="p-5 rounded-xl transition-all hover:shadow-md" style="background:linear-gradient(180deg,#FCFAF4,#F8F6EE);border:1px solid var(--line);animation:cardIn .5s cubic-bezier(.22,.8,.3,1) both;animation-delay:${(i*0.09).toFixed(2)}s">
+        <div class="flex items-start gap-3.5">
+          <div class="rounded-full flex items-center justify-center flex-shrink-0 shadow-sm" style="width:34px;height:34px;background:linear-gradient(135deg,#0F6E56,#0A5A46);color:#fff;font-size:14px;font-weight:600;animation:dotPop .45s cubic-bezier(.34,1.56,.64,1) both;animation-delay:${(i*0.09+0.12).toFixed(2)}s">${i+1}</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-semibold tracking-widest uppercase px-1.5 py-0.5 rounded" style="background:#EEF4F1;color:#0F6E56">Step ${i+1}</span>
+              <div class="text-[16px] font-semibold text-[color:var(--ink)]">${s.step}</div>
+            </div>
+            <div class="text-[14px] leading-relaxed mt-2 text-[color:var(--ink-2)]">${s.content}</div>
+            <div class="mt-3.5 pt-3 border-t border-dashed border-[color:var(--line)]">
+              <div class="text-[11px] text-[color:var(--muted)] mb-2 font-semibold tracking-wide uppercase">引用证据</div>
               ${s.evidence.map((e,j)=>`<span class="evi-badge" onclick="showEvidence('${x.id}',${i},${j})">📎 ${e}</span>`).join('')}
             </div>
           </div>
@@ -1643,7 +2017,7 @@ window.renderAiReply = function(payload) {
   window.rerunReasoning = async function() {
     toast('🤖 调用 DeepSeek 重新推理…');
     const el = document.getElementById('reasoning');
-    el.innerHTML = '<div class="p-6 text-center text-[13px] text-[color:var(--muted)]"><span class="pulse">🤖 DeepSeek 正在整合最新证据链…（约 10-20 秒）</span></div>';
+    el.innerHTML = aiLoadingHTML('DeepSeek 正在整合证据链推理', '解析材料 → 提炼信用含义 → 推演影响路径 → 生成研究判断');
     const subj = currentIssuer() || {};
     const materials = (subj.events_detail || []).slice(0, 8).map(e => ({
       type: e.type || '事件', date: e.date || '', content: `${e.title}（来源：${e.source}）`
@@ -1656,14 +2030,14 @@ window.renderAiReply = function(payload) {
       const steps = (data.result && data.result.steps) || [];
       if (steps.length) {
         el.innerHTML = steps.map((s, i) => `
-          <div class="glass card-hover p-4 mb-3 fade-in">
+          <div class="glass card-hover p-5 mb-3.5 fade-in">
             <div class="flex items-center gap-2 mb-2">
               <span class="chip chip-blue">Step ${i+1}</span>
-              <span class="text-[13px] font-medium">${s.title || ''}</span>
+              <span class="text-[14px] font-semibold">${s.title || ''}</span>
             </div>
-            <div class="text-[12px] leading-relaxed">${s.content || ''}</div>
-            ${s.evidence ? `<div class="mt-2 text-[11px] text-[color:var(--muted)]">📎 依据：${s.evidence}</div>` : ''}
-          </div>`).join('') + '<div class="mt-2 text-[11px] text-[color:var(--muted)]">🤖 DeepSeek 实时生成，可复现</div>';
+            <div class="text-[13px] leading-relaxed text-[color:var(--ink-2)]">${s.content || ''}</div>
+            ${s.evidence ? `<div class="mt-2.5 text-[12px] text-[color:var(--muted)]">📎 依据：${s.evidence}</div>` : ''}
+          </div>`).join('') + '<div class="mt-3 text-[12px] text-[color:var(--muted)] text-center">🤖 DeepSeek 实时生成，可复现</div>';
         toast('推理已更新');
       } else {
         renderReasoning(); toast('推理已更新');
@@ -1676,7 +2050,7 @@ window.renderAiReply = function(payload) {
   window.rerunReasoningFull = async function() {
     toast('🤖 调用 DeepSeek 重新推理…');
     const el = document.getElementById('reasoningFull');
-    el.innerHTML = '<div class="p-6 text-center text-[13px] text-[color:var(--muted)]"><span class="pulse">🤖 DeepSeek 正在整合最新证据链…（约 10-20 秒）</span></div>';
+    el.innerHTML = aiLoadingHTML('DeepSeek 正在整合证据链推理', '解析材料 → 提炼信用含义 → 推演影响路径 → 生成研究判断');
     const subj = currentIssuer() || {};
     const materials = (subj.events_detail || []).slice(0, 8).map(e => ({
       type: e.type || '事件', date: e.date || '', content: `${e.title}（来源：${e.source}）`
@@ -1689,14 +2063,14 @@ window.renderAiReply = function(payload) {
       const steps = (data.result && data.result.steps) || [];
       if (steps.length) {
         el.innerHTML = steps.map((s, i) => `
-          <div class="glass card-hover p-4 mb-3 fade-in">
+          <div class="glass card-hover p-5 mb-3.5 fade-in">
             <div class="flex items-center gap-2 mb-2">
               <span class="chip chip-blue">Step ${i+1}</span>
-              <span class="text-[13px] font-medium">${s.title || ''}</span>
+              <span class="text-[14px] font-semibold">${s.title || ''}</span>
             </div>
-            <div class="text-[12px] leading-relaxed">${s.content || ''}</div>
-            ${s.evidence ? `<div class="mt-2 text-[11px] text-[color:var(--muted)]">📎 依据：${s.evidence}</div>` : ''}
-          </div>`).join('') + '<div class="mt-2 text-[11px] text-[color:var(--muted)]">🤖 DeepSeek 实时生成，可复现</div>';
+            <div class="text-[13px] leading-relaxed text-[color:var(--ink-2)]">${s.content || ''}</div>
+            ${s.evidence ? `<div class="mt-2.5 text-[12px] text-[color:var(--muted)]">📎 依据：${s.evidence}</div>` : ''}
+          </div>`).join('') + '<div class="mt-3 text-[12px] text-[color:var(--muted)] text-center">🤖 DeepSeek 实时生成，可复现</div>';
         toast('推理已更新');
       } else {
         renderReasoningFullSteps(); toast('推理已更新');
@@ -1716,13 +2090,13 @@ window.renderAiReply = function(payload) {
   function renderAssistantPage() {
     const x = currentIssuer();
     document.getElementById('assistantSubject').innerHTML = `
-      <div class="p-3 rounded-lg border border-[color:var(--line)]" style="background:#FAF8F2">
+      <div class="p-4 rounded-xl border border-[color:var(--line)]" style="background:#FAF8F2">
         <div class="flex items-center gap-2">
-          <div class="text-[14px] font-medium">${x.name}</div>
+          <div class="text-[15px] font-semibold">${x.name}</div>
           ${priorityBadge(x.priority)}
         </div>
-        <div class="text-[11px] text-[color:var(--muted)] mt-1">${x.industry} · ${x.rating} · 30日异动 ${x.events} 项</div>
-        <button class="btn w-full mt-2" onclick="switchPage('dashboard')">切换主体 →</button>
+        <div class="text-[12px] text-[color:var(--muted)] mt-1.5 leading-relaxed">${x.industry} · ${x.rating} · 30日异动 ${x.events} 项</div>
+        <button class="btn w-full mt-3" onclick="switchPage('dashboard')">切换主体 →</button>
       </div>
     `;
     if (!state.chatHistory.length) {
@@ -1740,11 +2114,11 @@ window.renderAiReply = function(payload) {
     if (!el) return;
     el.innerHTML = state.chatHistory.map(m => {
       if (m.role==='user') {
-        return `<div class="flex justify-end"><div class="chat-user px-3.5 py-2.5 rounded-2xl rounded-tr-md max-w-[75%] text-[13px] leading-relaxed">${m.content}</div></div>`;
+        return `<div class="flex justify-end"><div class="chat-user px-4 py-2.5 rounded-2xl rounded-tr-md max-w-[75%] text-[14px] leading-relaxed shadow-sm">${m.content}</div></div>`;
       }
-      return `<div class="flex gap-2 items-start">
-        <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-[11px]" style="background:#0F6E56;color:#fff">信</div>
-        <div class="chat-ai px-3.5 py-3 rounded-2xl rounded-tl-md max-w-[92%] w-full text-[13px] leading-relaxed">${m.content}</div>
+      return `<div class="flex gap-2.5 items-start">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-[12px] shadow-sm" style="background:linear-gradient(135deg,#0F6E56,#0A5A46);color:#fff;font-weight:600">信</div>
+        <div class="chat-ai px-4 py-3 rounded-2xl rounded-tl-md max-w-[92%] w-full text-[14px] leading-relaxed">${m.content}</div>
       </div>`;
     }).join('');
     el.scrollTop = el.scrollHeight;
@@ -1756,7 +2130,17 @@ window.renderAiReply = function(payload) {
     const inp = document.getElementById('chatInput');
     const q = inp.value.trim(); if (!q) return;
     appendChat('user', q); inp.value = '';
-    state.chatHistory.push({role:'ai', content:'<span class="typing">🤖 DeepSeek 思考中…</span>', ts:Date.now()});
+    state.chatHistory.push({role:'ai', content:
+      `<div class="flex flex-col gap-2.5">
+        <div class="flex items-center gap-2">
+          <span class="ai-ring" style="width:16px;height:16px;border-width:2px"></span>
+          <span class="text-[13px] font-medium text-[color:var(--ink)]">DeepSeek 正在思考</span>
+          <span class="ai-steps"><i></i><i></i><i></i></span>
+        </div>
+        <div class="skel skel-line w100"></div>
+        <div class="skel skel-line w80"></div>
+        <div class="skel skel-line w60"></div>
+      </div>`, ts:Date.now()});
     renderChat();
     const subj = currentIssuer() || {};
     // 传丰富的主体画像给后端，让 DeepSeek 有料可推
@@ -1817,46 +2201,46 @@ window.renderAiReply = function(payload) {
     // 简单关键词路由
     if (/风险|恶化|异动|问题/.test(q)) {
       return `围绕 <b>${x.name}</b> 的信用风险，我识别到 ${x.events} 项异动，核心风险包括：<br/>` +
-             `<ul class="list-disc pl-4 mt-1 space-y-1">${x.tags.map(t=>`<li>${t}</li>`).join('')}</ul>` +
-             `<div class="mt-2">综合评估：<b>${c.opinion}</b></div>` +
-             `<div class="mt-2 text-[11px] text-[color:var(--muted)]">证据来源：${x.events_detail.slice(0,3).map(e=>e.source).join('、')}等。可到「证据链推理」页查看完整链条。</div>`;
+             `<ul class="list-disc pl-5 mt-1.5 space-y-1">${x.tags.map(t=>`<li>${t}</li>`).join('')}</ul>` +
+             `<div class="mt-2.5">综合评估：<b>${c.opinion}</b></div>` +
+             `<div class="mt-2.5 text-[12px] text-[color:var(--muted)]">证据来源：${x.events_detail.slice(0,3).map(e=>e.source).join('、')}等。可到「证据链推理」页查看完整链条。</div>`;
     }
     if (/持仓|建议|动作/.test(q)) {
       return `针对持仓 <b>${x.name}</b> 相关债券，建议动作分层如下：<br/>` +
-             c.actions.map(a=>`<span class="px-2 py-0.5 rounded action-${a.level} text-[12px] mr-1 inline-block mt-1">${a.label}</span>`).join('') +
-             `<div class="mt-2">当前短债占比 ${(x.shortDebtRatio*100).toFixed(0)}%，30日利差 ${x.spreadChange>=0?'+':''}${x.spreadChange}bp。若持有短久期（1年内）债券，需重点关注滚续能力与舆情演化。</div>`;
+             c.actions.map(a=>`<span class="px-2.5 py-1 rounded-md action-${a.level} text-[12px] mr-1.5 inline-block mt-1.5 font-medium">${a.label}</span>`).join('') +
+             `<div class="mt-2.5">当前短债占比 ${(x.shortDebtRatio*100).toFixed(0)}%，30日利差 ${x.spreadChange>=0?'+':''}${x.spreadChange}bp。若持有短久期（1年内）债券，需重点关注滚续能力与舆情演化。</div>`;
     }
     if (/同行|同业|相似|其他/.test(q)) {
       const peers = ISSUERS.filter(i => i.industry===x.industry && i.id!==x.id).slice(0,4);
       if (!peers.length) return `主体池中暂无与 ${x.name}（${x.industry}）同行业的其他主体。`;
       return `${x.industry} 行业相似主体（按优先级排序）：<br/>` +
-             peers.map(p=>`<div class="mt-1">· <b>${p.name}</b>（${p.rating}，${p.tags.slice(0,2).join('、')}）→ ${p.priority==='high'?'重点跟踪':'一般跟踪'}</div>`).join('') +
-             `<div class="mt-2 text-[11px] text-[color:var(--muted)]">系统会自动匹配同行业、同区域、同财务结构的主体，用于识别评级下调的传导风险。</div>`;
+             peers.map(p=>`<div class="mt-1.5">· <b>${p.name}</b>（${p.rating}，${p.tags.slice(0,2).join('、')}）→ ${p.priority==='high'?'重点跟踪':'一般跟踪'}</div>`).join('') +
+             `<div class="mt-2.5 text-[12px] text-[color:var(--muted)]">系统会自动匹配同行业、同区域、同财务结构的主体，用于识别评级下调的传导风险。</div>`;
     }
     if (/简评|摘要|总结|一段/.test(q)) {
       return `<b>${x.name}（${x.rating}，展望${x.outlook}）</b>：${c.opinion} 核心风险为${x.tags.slice(0,2).join('与')}，短债占比 ${(x.shortDebtRatio*100).toFixed(0)}%，30日利差${x.spreadChange>=0?'走阔':'收窄'} ${Math.abs(x.spreadChange)}bp。建议${c.actions[0].label}。`;
     }
     if (/为什么|原因|如何/.test(q)) {
       return `我按照证据链五步推理为您拆解 <b>${x.name}</b>：<br/>` +
-             x.reasoning.map((s,i)=>`<div class="mt-1"><span class="chip chip-blue">Step ${i+1}</span> ${s.step}：${s.content}</div>`).join('') +
-             `<div class="mt-2 text-[11px] text-[color:var(--muted)]">每一步均引用了原始证据，可在「证据链推理」页点击标签复核。</div>`;
+             x.reasoning.map((s,i)=>`<div class="mt-1.5"><span class="chip chip-blue">Step ${i+1}</span> ${s.step}：${s.content}</div>`).join('') +
+             `<div class="mt-2.5 text-[12px] text-[color:var(--muted)]">每一步均引用了原始证据，可在「证据链推理」页点击标签复核。</div>`;
     }
     return `已收到关于 <b>${x.name}</b> 的问题：「${q}」。<br/>结合当前证据链，我的初步判断是：${c.opinion} 更多细节可查看该主体的证据链五步推理与建议动作。`;
   }
 
   // ---------- 质检 / 复核 ----------
-  const SAMPLE_QA = `A集团（AA+，展望稳定）信用简评
+  const SAMPLE_QA = `金地集团（AAA，展望稳定）信用简评
 
-2025年上半年，A集团实现营业收入246亿元，同比下降18%；经营性现金流净额-35亿元，短期债务规模185亿元。公司作为区域房地产龙头，经营状况整体稳定，偿债能力较强，信用风险总体可控。
+2025年，金地集团实现营业收入358.58亿元，同比下降52.41%；归母净亏损132.81亿元。截至2025年末，公司有息负债余额670.32亿元，其中银行贷款占比98.6%。作为深圳知名混合所有制房企，公司经营状况整体稳定，偿债能力较强，信用风险总体可控。
 
-综合来看，A集团财务表现稳健，融资渠道多元，未来仍能保持AA+评级。建议持有其发行的中票产品。`;
+综合来看，金地集团财务表现稳健，融资渠道多元，未来仍能保持AAA评级。建议持有其发行的公司债产品。`;
 
   window.loadSampleQA = function() { document.getElementById('qaInput').value = SAMPLE_QA; toast('已加载示例报告'); };
   window.runQualityCheck = async function() {
     const text = document.getElementById('qaInput').value.trim();
     if (!text) { toast('请先输入或粘贴报告内容','warn'); return; }
     const el = document.getElementById('qaResults');
-    el.innerHTML = '<div class="p-8 text-center text-[13px] text-[color:var(--muted)]"><span class="pulse">🤖 DeepSeek-as-Judge 正在按 5 大维度打分…（约 15-25 秒）</span></div>';
+    el.innerHTML = aiLoadingHTML('DeepSeek-as-Judge 正在五维打分', '数据一致性 · 结论一致性 · 风险遗漏 · 证据缺失 · 维度完整');
     try {
       const data = await window.callBackend('judge', { report: text }, 45000);
       const r = data.result || {};
@@ -1868,12 +2252,12 @@ window.renderAiReply = function(payload) {
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="chip chip-blue">${d.score||0}/20</span>
-              <span class="text-[13px] font-medium">${d.name || ''}</span>
+              <span class="text-[14px] font-semibold">${d.name || ''}</span>
             </div>
           </div>
-          <div class="text-[12px] mt-1.5 leading-relaxed">${d.comment || ''}</div>
+          <div class="text-[13px] mt-2 leading-relaxed text-[color:var(--ink-2)]">${d.comment || ''}</div>
         </div>
-      `).join('') + `<div class="mt-4 text-[11px] text-[color:var(--muted)] leading-snug">🤖 DeepSeek-as-Judge 实时打分，五维加权。总评：${r.overall || ''}</div>`;
+      `).join('') + `<div class="mt-4 text-[12px] text-[color:var(--muted)] leading-relaxed">🤖 DeepSeek-as-Judge 实时打分，五维加权。总评：${r.overall || ''}</div>`;
       toast(`AI 质检完成 ${total}/100`);
     } catch (e) {
       const findings = analyzeQA(text);
@@ -1884,45 +2268,43 @@ window.renderAiReply = function(payload) {
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="chip ${f.level==='pass'?'chip-green':f.level==='warn'?'chip-amber':'chip-red'}">${f.level==='pass'?'通过':f.level==='warn'?'建议':'不通过'}</span>
-              <span class="text-[13px] font-medium">${f.dim}</span>
+              <span class="text-[14px] font-semibold">${f.dim}</span>
             </div>
           </div>
-          <div class="text-[12px] mt-1.5 leading-relaxed">${f.detail}</div>
-          ${f.evidence?`<div class="mt-1.5 text-[11px] text-[color:var(--muted)]">📎 依据：${f.evidence}</div>`:''}
+          <div class="text-[13px] mt-2 leading-relaxed text-[color:var(--ink-2)]">${f.detail}</div>
+          ${f.evidence?`<div class="mt-2 text-[12px] text-[color:var(--muted)]">📎 依据：${f.evidence}</div>`:''}
         </div>
-      `).join('') + `<div class="mt-4 text-[11px] text-red-500">⚠️ 后端调用失败（${e.message}），已降级本地规则质检</div>`;
+      `).join('') + `<div class="mt-4 text-[12px] text-red-500">⚠️ 后端调用失败（${e.message}），已降级本地规则质检</div>`;
       toast('后端离线，已降级','warn');
     }
   };
   function analyzeQA(text) {
     // 简单规则示例（针对示例报告构造有说服力的结果）
     const results = [];
-    const hasA = /A集团/.test(text);
+    const hasJindi = /金地/.test(text);
     const revStable = /(稳健|稳定|良好)/.test(text);
-    const hasNegCash = /(-|负)\s*35|经营.*现金流.*-/.test(text);
-    const mentionShortDebt = /短.*债务|短债/.test(text);
+    const hasHugeLoss = /亏损.*132|132\.\d+.*亏损|归母净亏损|大幅.*亏损/.test(text);
     const mentionRating = /(AA\+|AAA|AA)/.test(text);
-    const mentionOutlook = /展望.*稳定/.test(text);
 
     // ① 数据一致性
-    if (hasA) {
-      results.push({dim:'① 数据一致性', level:'pass', detail:'报告中"246亿元营业收入、-35亿元经营现金流、185亿元短期债务"与主体池 A集团 2025H1 财务数据一致。', evidence:'主体池·A集团财务快照 2025H1'});
+    if (hasJindi) {
+      results.push({dim:'① 数据一致性', level:'pass', detail:'报告中"358.58亿元营收、132.81亿元归母净亏损、670.32亿元有息负债、银行贷款占比98.6%"与主体池金地集团 2025 年报数据一致。', evidence:'主体池·金地集团 2025 年年报'});
     } else {
       results.push({dim:'① 数据一致性', level:'warn', detail:'未能匹配到明确的主体名与关键财务数据，建议补充报告期与主体基本信息。'});
     }
     // ② 结论一致性
-    if (revStable && hasNegCash) {
-      results.push({dim:'② 结论一致性', level:'fail', detail:'报告结论声称"财务表现稳健"，但报告中同时提到经营性现金流由正转负至 -35亿元，且收入同比下降 18%，结论与证据存在明显冲突。', evidence:'原文"经营性现金流净额-35亿元" vs 原文"财务表现稳健"'});
+    if (revStable && hasHugeLoss) {
+      results.push({dim:'② 结论一致性', level:'fail', detail:'报告结论声称"财务表现稳健"，但报告中同时提到 2025 全年营收同比下降 52.41%、归母净亏损 132.81 亿元，结论与证据存在明显冲突。', evidence:'原文"归母净亏损132.81亿元" vs 原文"财务表现稳健"'});
     } else {
       results.push({dim:'② 结论一致性', level:'pass', detail:'结论与关键财务证据基本一致。'});
     }
     // ③ 风险遗漏
     const misses = [];
-    if (!/股权.*冻结|股东.*风险|控股股东/.test(text)) misses.push('控股股东股份被司法冻结（治理风险）');
-    if (!/取消发行|发债.*取消|再融资/.test(text)) misses.push('拟发行中票取消发行（再融资弱化）');
-    if (!/评级.*展望.*负面|展望.*下调/.test(text)) misses.push('联合资信将评级展望由稳定下调至负面');
+    if (!/短.*债|短债|一年内到期/.test(text)) misses.push('一年内到期债务 308.72 亿元，短债占比 46%（滚续压力）');
+    if (!/银行贷款.*98|渠道.*单一|融资.*单一/.test(text)) misses.push('银行贷款占比达 98.6%，融资渠道过度集中');
+    if (!/计提.*减值|减值.*70|资产减值/.test(text)) misses.push('计提资产减值 70.31 亿元，反映存货/信用损失压力');
     if (misses.length) {
-      results.push({dim:'③ 风险遗漏', level:'fail', detail:`未覆盖主体池中已识别的 ${misses.length} 项重大风险事件：<br/>· ${misses.join('<br/>· ')}`, evidence:'主体池·A集团 30 日异动事件'});
+      results.push({dim:'③ 风险遗漏', level:'fail', detail:`未覆盖主体池中已识别的 ${misses.length} 项重大风险事件：<br/>· ${misses.join('<br/>· ')}`, evidence:'主体池·金地集团 30 日异动事件'});
     } else {
       results.push({dim:'③ 风险遗漏', level:'pass', detail:'报告涵盖了主体池中已识别的主要风险事件。'});
     }
@@ -1990,23 +2372,24 @@ window.renderAiReply = function(payload) {
     const el = document.getElementById('watchlist');
     if (!el) return;
     if (!state.watchlist.length) {
-      el.innerHTML = `<div class="p-8 text-center text-[13px] text-[color:var(--muted)]">
-        <div class="text-[40px] mb-2">📌</div>
-        <div>跟踪清单为空</div>
-        <div class="text-[11px] mt-2">可从主体池详情页或事件详情弹窗一键"加入跟踪"</div>
+      el.innerHTML = `<div class="empty-state">
+        <div class="icon">📌</div>
+        <div class="text-[14px] font-medium text-[color:var(--ink-2)]">跟踪清单为空</div>
+        <div class="text-[12px] mt-2 leading-relaxed text-[color:var(--muted)]">可从主体池详情页或事件详情弹窗一键"加入跟踪"</div>
+        <button class="btn mt-4" onclick="switchPage('dashboard')">去主体池看板 →</button>
       </div>`;
     } else {
       el.innerHTML = state.watchlist.map(w=>`
-        <div class="p-3 rounded-lg border border-[color:var(--line)] mb-2 fade-in ${w.done?'opacity-60':''}">
+        <div class="p-3.5 rounded-xl border border-[color:var(--line)] mb-2.5 fade-in ${w.done?'opacity-60':''}" style="background:#FAF8F2">
           <div class="flex items-start gap-3">
             <div class="checkbox ${w.done?'on':''}" onclick="toggleWatch(${w.id})"></div>
             <div class="flex-1">
               <div class="flex items-center gap-2 flex-wrap">
                 ${priorityBadge(w.level)}
-                <span class="text-[13px] font-medium">${w.subject}</span>
-                <span class="text-[11px] text-[color:var(--muted)]">${w.createdAt}</span>
+                <span class="text-[14px] font-semibold">${w.subject}</span>
+                <span class="text-[12px] text-[color:var(--muted)]">${w.createdAt}</span>
               </div>
-              <div class="text-[12px] mt-1 leading-relaxed ${w.done?'line-through':''}">${w.question}</div>
+              <div class="text-[13px] mt-1.5 leading-relaxed ${w.done?'line-through':''} text-[color:var(--ink-2)]">${w.question}</div>
             </div>
             <button class="btn" onclick="removeWatch(${w.id})">删除</button>
           </div>
@@ -2066,7 +2449,7 @@ ${x.events_detail.map(e=>`· [${e.date}] [${e.type}] ${e.title}（${e.source}）
 ${c.actions.map(a=>`· [${a.level==='danger'?'高风险':a.level==='warn'?'关注':'跟踪'}] ${a.label}`).join('\n')}
 
 ━━━━━━━━━━━━━━━━━━━━
-本简报由 信元 CreditLens 基于多源证据自动生成，所有主体名称、财务数据、事件均为虚构，仅用于产品演示，不构成投资建议。`;
+本简报由 信元 CreditLens 基于多源证据自动生成。真实主体数据来源于公司公告、评级机构公告及主流媒体公开报道整理，仅用于产品演示，不构成投资建议。`;
     download(`${x.name}-信用研究简报.txt`, text);
     toast('研究简报已导出');
   };
@@ -2087,6 +2470,35 @@ ${c.actions.map(a=>`· [${a.level==='danger'?'高风险':a.level==='warn'?'关�
   renderIssuerList();
   renderDetail();
   updateWatchlistBadge();
+  requestAnimationFrame(moveTabIndicator);
+  window.addEventListener('load', moveTabIndicator);
+
+  // ---------- 键盘快捷键 ----------
+  const PAGES = ['dashboard','reasoning','assistant','quality','watchlist'];
+  document.addEventListener('keydown', (e) => {
+    const inField = /input|textarea|select/i.test(document.activeElement.tagName);
+    if (e.key === 'Escape') { closeModal(); closeDrawer(); return; }
+    if (inField) return;
+    // 数字键 1-5 切页
+    if (/^[1-5]$/.test(e.key)) { switchPage(PAGES[+e.key - 1]); return; }
+    // / 聚焦搜索
+    if (e.key === '/') { e.preventDefault(); document.getElementById('searchInput').focus(); return; }
+    // j / k 上下切主体
+    if (e.key === 'j' || e.key === 'k') {
+      const list = ISSUERS
+        .filter(x => state.filter==='all' || x.priority===state.filter)
+        .filter(x => state.industryFilter==='all' || x.industry===state.industryFilter)
+        .sort((a,b) => b.priorityScore - a.priorityScore);
+      const cur = list.findIndex(x => x.id === state.currentId);
+      const next = e.key === 'j' ? Math.min(cur+1, list.length-1) : Math.max(cur-1, 0);
+      if (next !== cur && list[next]) {
+        state.currentId = list[next].id;
+        if (state.page === 'reasoning') renderReasoningPage();
+        else { renderIssuerList(); renderDetail(); }
+        toast(`已切换至 ${list[next].name}`);
+      }
+    }
+  });
 })();
 
 </script>
